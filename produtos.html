@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>1001 Imports</title>
+  <title>Carrinho de Compras</title>
   <style>
-    /* Estilos Globais */
     body {
       margin: 0;
       padding: 0;
@@ -13,703 +12,348 @@
       color: #fff;
       font-family: Arial, sans-serif;
     }
-    /* Cabeçalho */
-    .header {
-      position: fixed;
-      top: 40px; /* Espaço para o banner */
-      left: 0;
-      width: 100%;
+    header {
       background: #000;
       padding: 10px 20px;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
+      text-align: center;
       border-bottom: 1px solid rgba(255,255,255,0.2);
-      transition: top 0.3s ease;
     }
-    .header .left { flex: 0 0 auto; }
-    .header .center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
     }
-    .header .center .logo {
-      width: 100px;
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
     }
-    .header .right {
+    .cart-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-    .header .right span {
-      font-size: 28px;
-      cursor: pointer;
-      display: inline-block;
-    }
-    /* Badge no ícone do carrinho */
-    .cart-count {
-      background: red;
-      color: #fff;
-      border-radius: 50%;
-      padding: 2px 6px;
-      font-size: 0.8rem;
+      border-bottom: 1px solid #333;
+      padding: 10px 0;
       position: relative;
-      top: -12px;
-      left: -10px;
-    }
-    /* Banner de Promoção (Texto Rolando) */
-    .promo-banner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #fff;
-      color: #000;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 18px;
-      font-weight: bold;
-      z-index: 1010;
+      background: #111;
+      transition: transform 0.3s ease-out;
       overflow: hidden;
-      transition: opacity 0.3s ease;
     }
-    .promo-banner.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .promo-banner p {
-      margin: 0;
-      white-space: nowrap;
-      animation: scroll-text 10s linear infinite;
-    }
-    @keyframes scroll-text {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    /* Ícone do Menu (Sidebar) */
-    .menu-icon {
-      font-size: 36px;
-      cursor: pointer;
-      display: inline-block;
-    }
-    /* Input de Pesquisa – Ajustado para posição fixa */
-    .search-container {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      z-index: 1020;
-    }
-    .search-input {
-      position: fixed;
-      top: -60px; /* Inicia oculto acima da viewport */
-      padding: 10px 15px;
-      font-size: 18px;
-      border: 2px solid #f8c91c;
-      border-radius: 5px;
-      background: #000;
-      color: #fff;
-      outline: none;
-      width: 250px;
-      opacity: 0;
-      visibility: hidden;
-      transition: top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 1020;
-    }
-    .search-input.active {
-      opacity: 1;
-      visibility: visible;
-      top: 120px; /* Agora fica um pouquinho mais abaixo */
-    }
-    /* Responsividade para o input da pesquisa */
-    @media screen and (min-width: 768px) {
-      .search-input {
-        width: 400px;
-      }
-    }
-    @media screen and (min-width: 1024px) {
-      .search-input {
-        width: 500px;
-      }
-    }
-    /* Sidebar com Instagram e WhatsApp */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 250px;
-      height: 100vh;
-      background: #fff;
-      padding: 90px 20px 20px;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 999;
-    }
-    .sidebar.open {
-      transform: translateX(0);
-    }
-    .sidebar a {
-      display: block;
-      color: #000;
-      text-decoration: none;
-      font-size: 18px;
-      margin: 20px 0;
-      padding: 10px 0;
-    }
-    .sidebar a:hover {
-      background: #f0f0f0;
-    }
-    /* Container do Vídeo */
-    #video-container {
-      max-width: 800px;
-      margin: 170px auto 10px auto; /* espaçamento entre o banner, search e filtros */
-      padding: 0 20px;
-    }
-    #promo-video {
-      width: 100%;
-      height: auto;
-      display: block;
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
       border-radius: 8px;
-    }
-    /* Área de Filtros */
-    #filter-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 800px;
-      margin: 10px auto;
-      padding: 0 20px;
-    }
-    .filter-input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #fff;
-      background: transparent;
-      color: #fff;
-      font-size: 1rem;
-      border-radius: 30px;
-      text-align: center;
-      height: 40px;
-      box-sizing: border-box;
-    }
-    /* Customização do dropdown para exibir seta para baixo */
-    select.filter-input {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polyline points="1,3 5,7 9,3" fill="none" stroke="white" stroke-width="2"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 10px 10px;
-      padding-right: 30px;
-    }
-    /* Input readonly para "Ordenar por" com valor fixo */
-    #order-by {
-      cursor: default;
-    }
-    #product-count {
-      display: block;
-      text-align: center;
-      margin: 10px auto;
-      font-size: 1.2rem;
-      max-width: 800px;
-    }
-    /* Título da Seção de Produtos */
-    .products-title {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 10px auto;
-    }
-    /* Container dos Produtos */
-    #products-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .product-card {
-      background: transparent;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      width: 300px;
-      box-sizing: border-box;
-      text-align: center;
-      border: 1px solid transparent;
-    }
-    /* Contorno afastado para a imagem */
-    .product-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
+      margin-right: 20px;
       outline: 2px solid #fff;
       outline-offset: 5px;
     }
-    .product-description h2 {
-      margin: 10px 0;
-      font-size: 1.5rem;
+    .cart-item .details {
+      flex: 1;
     }
-    .product-description p {
-      margin: 5px 0;
-      font-size: 1rem;
+    .cart-item .details h2 {
+      margin: 0 0 5px;
+      font-size: 1.2rem;
     }
-    /* Preços */
-    .prices {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
+    .cart-item .details p {
+      margin: 2px 0;
+      font-size: 0.9rem;
     }
-    .prices .old-price {
-      color: gray;
-      text-decoration: line-through;
-      font-size: 1rem;
+    .total {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
     }
-    .prices .new-price {
-      color: #02FF85;
-      font-size: 1rem;
-    }
-    /* Botão Comprar */
-    .buy-button {
+    .checkout-btn, .send-btn {
       display: block;
       width: 100%;
-      border: 1px solid #000;
-      background: #fff;
+      padding: 15px;
+      background: #02FF85;
       color: #000;
-      padding: 10px 0;
-      font-size: 1.3rem;
-      cursor: pointer;
-      margin-top: 10px;
-      border-radius: 30px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-    /* Animações */
-    @keyframes buttonClick {
-      0% { transform: scale(1); }
-      50% { transform: scale(0.9); }
-      100% { transform: scale(1); }
-    }
-    .button-animate {
-      animation: buttonClick 0.2s ease;
-    }
-    @keyframes iconClick {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    .icon-animate {
-      animation: iconClick 0.2s ease;
-    }
-    /* Estilos do Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background-color: #000;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid rgba(255,255,255,0.5);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
-      color: #fff;
-      position: relative;
       text-align: center;
-    }
-    /* Alinha o texto explicativo à esquerda */
-    .modal-content p.explanation {
-      text-align: left;
-    }
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    /* Botões do modal: exibidos um abaixo do outro, brancos e finos */
-    .modal-buttons button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px 0;
+      text-transform: uppercase;
       border: none;
-      background: #fff;
-      color: #000;
-      border-radius: 5px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
       cursor: pointer;
+      margin-top: 20px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #02FF85;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    /* Exibição da quantidade de itens no carrinho */
+    #cart-count-display {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 1.2rem;
       font-weight: bold;
     }
-    .modal-buttons button:hover {
-      background: #e6b900;
+    /* Container do formulário que desliza de baixo para cima */
+    #form-container {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50vh;
+      background: #111;
+      transform: translateY(100%);
+      transition: transform 0.5s ease-out;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    #form-container.show {
+      transform: translateY(0);
+    }
+    /* Formulário de entrega */
+    #delivery-form {
+      width: 100%;
+    }
+    #delivery-form label {
+      display: block;
+      margin-top: 10px;
+    }
+    #delivery-form input, 
+    #delivery-form select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #000;
+      color: #fff;
+      box-sizing: border-box;
     }
   </style>
-  <!-- Biblioteca PapaParse para ler CSV -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
-  <!-- Banner de Promoção -->
-  <div class="promo-banner">
-    <p>Parcele em até 5x sem juros | Frete grátis acima de R$ 300</p>
-  </div>
-  <!-- Cabeçalho -->
-  <header class="header">
-    <div class="left">
-      <span class="menu-icon" onclick="animateIcon(this); toggleSidebar()">☰</span>
-    </div>
-    <div class="center">
-      <img src="logo.png" alt="Logo" class="logo">
-    </div>
-    <div class="right">
-      <span onclick="animateIcon(this); toggleSearch()">🔍</span>
-      <span id="cart-icon" onclick="animateIcon(this); goToCart()">
-        🛒<span id="cart-count" class="cart-count"></span>
-      </span>
-    </div>
+  <header>
+    <h1>Carrinho de Compras</h1>
   </header>
-  <!-- Input de Pesquisa -->
-  <div class="search-container">
-    <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar..." oninput="filterProducts()">
+  <div class="container">
+    <div id="cart-items"></div>
+    <div id="cart-count-display"></div>
+    <div id="total" class="total"></div>
+    
+    <!-- Botão que exibe o formulário -->
+    <button class="checkout-btn" onclick="showForm()">Finalizar Compra</button>
+    <!-- Esse link apenas navega de volta para a página de produtos -->
+    <a href="index.html" class="back-link">Voltar para Produtos</a>
   </div>
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <a href="https://www.instagram.com/1001importts?igsh=aTgxaDBsNjJ1dngx" target="_blank">
-      <img src="instagram.png" alt="Instagram" style="width:20px; vertical-align:middle; margin-right:8px;"> Instagram
-    </a>
-    <a href="https://api.whatsapp.com/send?phone=17996833867" target="_blank">
-      <img src="whatsapp.png" alt="WhatsApp" style="width:20px; vertical-align:middle; margin-right:8px;"> WhatsApp
-    </a>
-  </div>
-  <!-- Container do Vídeo -->
-  <div id="video-container">
-    <video id="promo-video" loop muted autoplay playsinline>
-      <source src="video.mp4" type="video/mp4">
-      Seu navegador não suporta o elemento de vídeo.
-    </video>
-  </div>
-  <!-- Área de Filtros -->
-  <div id="filter-container">
-    <!-- Ordenar por -->
-    <input type="text" id="order-by" class="filter-input" value="Ordenar por" readonly>
-    <!-- Dropdown com as opções -->
-    <select id="category" class="filter-input" onchange="filterProducts()">
-      <option value="all">Todos os Produtos</option>
-      <option value="Anéis">Anéis</option>
-      <option value="Pulseiras">Pulseiras</option>
-      <option value="Correntes">Correntes</option>
-      <option value="Brincos">Brincos</option>
-      <option value="Pingentes">Pingentes</option>
-    </select>
-  </div>
-  <!-- Quantidade de produtos -->
-  <span id="product-count"></span>
-  <!-- Título da Seção -->
-  <h1 class="products-title">Todos os Produtos</h1>
-  <!-- Container dos Produtos -->
-  <div id="products-container"></div>
   
-  <!-- Modal para Medir o Tamanho do Anel -->
-  <div id="measureModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeModal()">X</span>
-      <h2>Como medir o tamanho do seu anel</h2>
-      <p class="explanation">Siga estas instruções para medir o tamanho do seu dedo:</p>
-      <div id="modalMedia">
-        <img id="measureImage" src="medir.jpeg" alt="Como medir" style="width:100%; border-radius:10px;">
-        <video id="measureVideo" controls style="display:none; width:100%; border-radius:10px;">
-          <source src="dedo.mp4" type="video/mp4">
-          Seu navegador não suporta o elemento de vídeo.
-        </video>
-      </div>
-      <div class="modal-buttons">
-        <button onclick="showVideo()">VEJA COMO MEDIR SEU DEDO</button>
-        <button onclick="continueToCart()">CONTINUAR PARA O CARRINHO</button>
-        <button onclick="closeModal()">CANCELAR</button>
-      </div>
-    </div>
+  <!-- Container do formulário de entrega, inicialmente oculto -->
+  <div id="form-container">
+    <form id="delivery-form">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" required>
+      
+      <label for="estado">Estado:</label>
+      <input type="text" id="estado" name="estado" required>
+      
+      <label for="cidade">Cidade:</label>
+      <input type="text" id="cidade" name="cidade" required>
+      
+      <label for="endereco">Endereço:</label>
+      <input type="text" id="endereco" name="endereco" required>
+      
+      <label for="complemento">Complemento:</label>
+      <input type="text" id="complemento" name="complemento">
+      
+      <label for="ponto">Ponto de Referência:</label>
+      <input type="text" id="ponto" name="ponto">
+      
+      <label for="pagamento">Forma de Pagamento:</label>
+      <select id="pagamento" name="pagamento" required>
+        <option value="">Selecione</option>
+        <option value="pix">Pix</option>
+        <option value="credito">Cartão de Crédito</option>
+        <option value="debito">Cartão de Débito</option>
+      </select>
+    </form>
+    <!-- Botão para enviar o pedido -->
+    <button class="send-btn" onclick="finalizePurchase()">ENVIAR PEDIDO</button>
   </div>
   
   <script>
-    // Função para normalizar texto: remove acentos e converte para minúsculas
-    function normalizeText(text) {
-      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
-    
-    // Converte termos conhecidos para forma singular
-    function singularize(text) {
-      let result = text;
-      const mapping = {
-        "aneis": "anel",
-        "pulseiras": "pulseira",
-        "correntes": "corrente",
-        "brincos": "brinco",
-        "pingentes": "pingente"
-      };
-      for (let plural in mapping) {
-        const singular = mapping[plural];
-        result = result.replace(new RegExp(plural, "gi"), singular);
-      }
-      return result;
-    }
-    
-    // Mapeamento dos termos por categoria (valores em forma singular)
-    const categoryTerms = {
-      "Anéis": ["anel"],
-      "Pulseiras": ["pulseira"],
-      "Correntes": ["corrente"],
-      "Brincos": ["brinco"],
-      "Pingentes": ["pingente"]
-    };
-    
-    // Recupera o carrinho salvo no localStorage ou cria um array vazio
+    // Recupera o carrinho salvo no localStorage
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let allProducts = [];
-    let currentProduct = null; // Produto atual para o modal
     
-    // Atualiza a quantidade exibida no ícone do carrinho
-    function updateCartCount() {
-      document.getElementById("cart-count").innerText = cart.length > 0 ? cart.length : "";
-    }
-    
-    // Atualiza o carrinho ao carregar a página e ao voltar da cache
-    window.addEventListener("load", () => {
-      cart = JSON.parse(localStorage.getItem("cart")) || [];
-      updateCartCount();
-    });
-    window.addEventListener("pageshow", () => {
-      cart = JSON.parse(localStorage.getItem("cart")) || [];
-      updateCartCount();
-    });
-    
-    function toggleSearch() {
-      const searchInput = document.getElementById("searchInput");
-      searchInput.classList.toggle("active");
-      const video = document.getElementById("promo-video");
-      if (searchInput.classList.contains("active")) {
-        video.pause();
-        searchInput.focus();
-      } else {
-        searchInput.value = "";
-        filterProducts();
-        video.play();
+    // Renderiza os itens do carrinho e atualiza a quantidade exibida
+    function renderCart() {
+      const cartItemsContainer = document.getElementById("cart-items");
+      cartItemsContainer.innerHTML = "";
+      
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        document.getElementById("total").innerText = "";
+        document.getElementById("cart-count-display").innerText = "Itens no carrinho: 0";
+        return;
       }
-    }
-    
-    function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
-    }
-    
-    // Anima os ícones
-    function animateIcon(element) {
-      element.classList.add("icon-animate");
-      setTimeout(() => element.classList.remove("icon-animate"), 200);
-    }
-    
-    // Função para animar a imagem do produto indo para o carrinho
-    function animateAddToCart(imageElement) {
-      const cartIcon = document.getElementById("cart-icon");
-      const imgRect = imageElement.getBoundingClientRect();
-      const cartRect = cartIcon.getBoundingClientRect();
       
-      // Clona a imagem
-      const flyingImg = imageElement.cloneNode(true);
-      flyingImg.style.position = 'fixed';
-      flyingImg.style.top = imgRect.top + 'px';
-      flyingImg.style.left = imgRect.left + 'px';
-      flyingImg.style.width = imgRect.width + 'px';
-      flyingImg.style.height = imgRect.height + 'px';
-      flyingImg.style.transition = 'all 1s ease-in-out';
-      flyingImg.style.zIndex = 2000;
-      document.body.appendChild(flyingImg);
-      
-      // Calcula posição de destino (centro do ícone do carrinho)
-      const targetX = cartRect.left + cartRect.width / 2 - imgRect.width / 2;
-      const targetY = cartRect.top + cartRect.height / 2 - imgRect.height / 2;
-      
-      // Força o reflow para garantir que a transição aconteça
-      flyingImg.getBoundingClientRect();
-      
-      // Aplica a transição
-      flyingImg.style.top = targetY + 'px';
-      flyingImg.style.left = targetX + 'px';
-      flyingImg.style.width = '0px';
-      flyingImg.style.height = '0px';
-      flyingImg.style.opacity = '0.5';
-      
-      // Remove o clone após a animação
-      flyingImg.addEventListener('transitionend', function() {
-        flyingImg.remove();
-      });
-    }
-    
-    // Adiciona produto ao carrinho, atualiza a contagem e executa a animação
-    function addToCart(product, button) {
-      if(button) {
-        button.classList.add("button-animate");
-        setTimeout(() => button.classList.remove("button-animate"), 200);
-        // Procura a imagem do produto para animar
-        const card = button.closest('.product-card');
-        if(card) {
-          const imageElement = card.querySelector('.product-image');
-          if(imageElement) {
-            animateAddToCart(imageElement);
-          }
+      let total = 0;
+      cart.forEach((item, index) => {
+        let price = item.newPrice.replace(/\D+/g, "");
+        price = parseFloat(price) / 100;
+        if (!isNaN(price)) {
+          total += price;
         }
-      }
-      cart.push({
-        name: product.Nome,
-        oldPrice: product["Preço Antigo"],
-        newPrice: product["Preço Novo"],
-        parcelas: product.Parcelas,
-        image: product["URL da Imagem"]
+        
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("cart-item");
+        itemDiv.dataset.index = index;
+        itemDiv.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="details">
+            <h2>${item.name}</h2>
+            <p>Preço: R$ ${price.toFixed(2)}</p>
+            <p>${item.parcelas ? item.parcelas : ""}</p>
+          </div>
+        `;
+        cartItemsContainer.appendChild(itemDiv);
+        attachSwipeListeners(itemDiv);
       });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
+      
+      document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+      document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Redireciona para a página do carrinho (caso seja desejado futuramente)
-    function goToCart() {
-      window.location.href = "produtos.html";
+    // Detecta o gesto de deslizar para a esquerda e remove o item
+    function attachSwipeListeners(element) {
+      let startX = 0;
+      let currentX = 0;
+      const threshold = 100; // distância mínima para acionar o delete
+      
+      element.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        element.style.transition = '';
+      }, false);
+      
+      element.addEventListener('touchmove', function(e) {
+        currentX = e.touches[0].clientX;
+        let deltaX = currentX - startX;
+        if (deltaX < 0) { // somente para deslize à esquerda
+          element.style.transform = `translateX(${deltaX}px)`;
+        }
+      }, false);
+      
+      element.addEventListener('touchend', function(e) {
+        let deltaX = currentX - startX;
+        if (deltaX < -threshold) {
+          element.style.transition = 'transform 0.3s ease-out';
+          element.style.transform = 'translateX(-100%)';
+          setTimeout(() => {
+            let index = parseInt(element.dataset.index);
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+          }, 300);
+        } else {
+          element.style.transition = 'transform 0.3s ease-out';
+          element.style.transform = 'translateX(0)';
+        }
+      }, false);
     }
     
-    // Função para tratar a compra: para produtos anéis mostra o modal; caso contrário, compra normalmente
-    function handleBuy(product, button) {
-      if (singularize(normalizeText(product.Nome)).includes("anel")) {
-        showMeasureModal(product);
-      } else {
-        addToCart(product, button);
+    // Exibe o formulário deslizando de baixo para cima
+    function showForm() {
+      document.getElementById("form-container").classList.add("show");
+    }
+    
+    // Anexa eventos de swipe para fechar o formulário deslizando para baixo
+    function attachFormSwipe() {
+      const formContainer = document.getElementById("form-container");
+      let startY = 0;
+      let currentY = 0;
+      const threshold = 100; // distância mínima para acionar o fechamento
+      
+      formContainer.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY;
+        formContainer.style.transition = '';
+      }, false);
+      
+      formContainer.addEventListener('touchmove', function(e) {
+        currentY = e.touches[0].clientY;
+        let deltaY = currentY - startY;
+        if (deltaY > 0) { // apenas para deslizar para baixo
+          formContainer.style.transform = `translateY(${deltaY}px)`;
+        }
+      }, false);
+      
+      formContainer.addEventListener('touchend', function(e) {
+        let deltaY = currentY - startY;
+        if (deltaY > threshold) {
+          formContainer.style.transition = 'transform 0.3s ease-out';
+          formContainer.style.transform = 'translateY(100%)';
+          setTimeout(() => {
+            formContainer.classList.remove("show");
+            formContainer.style.transform = ''; // reseta a transformação
+          }, 300);
+        } else {
+          formContainer.style.transition = 'transform 0.3s ease-out';
+          formContainer.style.transform = 'translateY(0)';
+        }
+      }, false);
+    }
+    
+    // Finaliza a compra e envia os dados via WhatsApp com formatação ajustada para evitar erros de exibição
+    function finalizePurchase() {
+      const nome = document.getElementById("nome").value.trim();
+      const estado = document.getElementById("estado").value.trim();
+      const cidade = document.getElementById("cidade").value.trim();
+      const endereco = document.getElementById("endereco").value.trim();
+      const complemento = document.getElementById("complemento").value.trim();
+      const ponto = document.getElementById("ponto").value.trim();
+      const pagamento = document.getElementById("pagamento").value;
+      
+      if (!nome || !estado || !cidade || !endereco || !pagamento) {
+        alert("Por favor, preencha os campos obrigatórios do formulário.");
+        return;
       }
-    }
-    
-    // Renderiza os produtos na tela
-    function renderProducts(products) {
-      const container = document.getElementById("products-container");
-      container.innerHTML = "";
-      products.forEach(product => {
-        const card = document.createElement("div");
-        card.classList.add("product-card");
-        let productHTML = `
-          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
-          <div class="product-description">
-            <h2>${product.Nome}</h2>
-            <div class="prices">
-              <p class="old-price">${product["Preço Antigo"]}</p>
-              <p class="new-price">${product["Preço Novo"]}</p>
-            </div>
-            <p>${product.Parcelas}</p>
-            <button class="buy-button">Comprar</button>
-          </div>`;
-        card.innerHTML = productHTML;
-        container.appendChild(card);
-        const buyButton = card.querySelector(".buy-button");
-        buyButton.addEventListener("click", () => {
-          handleBuy(product, buyButton);
-        });
+      
+      let pagamentoInfo = "";
+      if (pagamento === "pix") {
+        pagamentoInfo = "Forma de pagamento: Pix\nChave Pix: ivansousalesa@gmail.com";
+      } else if (pagamento === "credito") {
+        pagamentoInfo = "Forma de pagamento: Cartão de Crédito\nLink para Pagamento: https://link.mercadopago.com.br/1001importts";
+      } else if (pagamento === "debito") {
+        pagamentoInfo = "Forma de pagamento: Cartão de Débito\nLink para Pagamento: https://link.mercadopago.com.br/1001importts";
+      }
+      
+      let produtosTexto = "Produtos:\n";
+      cart.forEach(item => {
+        produtosTexto += `- ${item.name} - Preço: ${item.newPrice}\n`;
       });
-      document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
-    }
-    
-    // Função de filtragem: aplica filtro pelo dropdown e pela pesquisa (usando normalização e singularização)
-    function filterProducts() {
-      let filtered = allProducts.slice();
       
-      // Filtro pelo dropdown
-      const category = document.getElementById("category").value;
-      const titleElement = document.querySelector(".products-title");
-      if (category === "all") {
-        titleElement.textContent = "Todos os Produtos";
-      } else {
-        titleElement.textContent = category;
-        const terms = categoryTerms[category] || [];
-        filtered = filtered.filter(product => {
-          const normalizedProductName = singularize(normalizeText(product.Nome));
-          return terms.some(term => normalizedProductName.includes(term));
-        });
-      }
+      let total = 0;
+      cart.forEach(item => {
+        let price = item.newPrice.replace(/\D+/g, "");
+        price = parseFloat(price) / 100;
+        if (!isNaN(price)) total += price;
+      });
+      produtosTexto += `\nTotal: R$ ${total.toFixed(2)}\n\n`;
       
-      // Filtro pela pesquisa
-      const searchInputRaw = document.getElementById("searchInput").value.trim();
-      if (searchInputRaw !== "") {
-        const normalizedSearch = singularize(normalizeText(searchInputRaw));
-        filtered = filtered.filter(product => {
-          const normalizedProductName = singularize(normalizeText(product.Nome));
-          return normalizedProductName.includes(normalizedSearch);
-        });
-      }
+      let entregaTexto = "Dados de Entrega:\n";
+      entregaTexto += `Nome: ${nome}\n`;
+      entregaTexto += `Estado: ${estado}\n`;
+      entregaTexto += `Cidade: ${cidade}\n`;
+      entregaTexto += `Endereço: ${endereco}\n`;
+      if (complemento) entregaTexto += `Complemento: ${complemento}\n`;
+      if (ponto) entregaTexto += `Ponto de Referência: ${ponto}\n`;
+      entregaTexto += pagamentoInfo + "\n";
       
-      renderProducts(filtered);
+      let mensagem = "Olá, gostaria de finalizar a compra:\n\n" + produtosTexto + entregaTexto;
+      let url = "https://wa.me/17996833867?text=" + encodeURIComponent(mensagem);
+      
+      window.open(url, "_blank");
     }
     
-    // Carrega os produtos do CSV e aplica a filtragem inicial
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSNzpkH5z5PPki-w88HnOUlMhdOpdD_Yjp4Y6JB7hyaHp90OSvhcVpnrWUR-Ghx2RMEg05nM13suulk/pub?output=csv";
-    Papa.parse(csvUrl, {
-      download: true,
-      header: true,
-      complete: function(results) {
-        allProducts = results.data.filter(item => item.Nome && item.Nome.trim() !== "");
-        filterProducts();
-      }
-    });
-    
-    // Ajusta cabeçalho e banner ao rolar a página
-    window.addEventListener("scroll", function() {
-      const banner = document.querySelector(".promo-banner");
-      const header = document.querySelector(".header");
-      if (window.scrollY > 0) {
-        banner.classList.add("hidden");
-        header.style.top = "0";
-      } else {
-        banner.classList.remove("hidden");
-        header.style.top = "40px";
-      }
-    });
-    
-    // Funções para o Modal de Medição (apenas para produtos anéis)
-    function showMeasureModal(product) {
-      currentProduct = product;
-      // Reseta para exibir a imagem e esconder o vídeo
-      document.getElementById("measureImage").style.display = "block";
-      document.getElementById("measureVideo").style.display = "none";
-      document.getElementById("measureVideo").pause();
-      document.getElementById("measureModal").style.display = "block";
-    }
-    
-    function closeModal() {
-      document.getElementById("measureModal").style.display = "none";
-      currentProduct = null;
-    }
-    
-    function showVideo() {
-      document.getElementById("measureImage").style.display = "none";
-      document.getElementById("measureVideo").style.display = "block";
-      document.getElementById("measureVideo").play();
-    }
-    
-    function continueToCart() {
-      if(currentProduct) {
-        // Adiciona o produto ao carrinho, atualizando somente o ícone
-        addToCart(currentProduct);
-        closeModal();
-      }
-    }
+    renderCart();
+    attachFormSwipe();
   </script>
 </body>
 </html>
