@@ -319,12 +319,12 @@
     }
     .modal-content {
       background-color: #000;
-      margin: 15% auto; /* Centraliza verticalmente com margem ajustada */
+      margin: 10% auto;
       padding: 20px;
       border: 2px solid rgba(255,255,255,0.5);
       border-radius: 15px;
       width: 90%;
-      max-width: 400px; /* Diminuído de 500px para 400px */
+      max-width: 500px;
       color: #fff;
       position: relative;
       text-align: center;
@@ -648,4 +648,40 @@
         header.style.top = "0";
       } else {
         banner.classList.remove("hidden");
-        header.st
+        header.style.top = "40px";
+      }
+    });
+    
+    function showMeasureModal(product, productImg) {
+      currentProduct = product;
+      currentProductImage = productImg;
+      document.getElementById("measureImage").style.display = "block";
+      document.getElementById("measureVideo").style.display = "none";
+      document.getElementById("measureVideo").pause();
+      document.getElementById("measureModal").style.display = "block";
+    }
+    
+    function closeModal() {
+      document.getElementById("measureModal").style.display = "none";
+      currentProduct = null;
+    }
+    
+    function showVideo() {
+      document.getElementById("measureImage").style.display = "none";
+      document.getElementById("measureVideo").style.display = "block";
+      document.getElementById("measureVideo").play();
+    }
+    
+    function continueToCart() {
+      if(currentProduct) {
+        addToCart(currentProduct);
+        if (currentProductImage) {
+          flyToCart(currentProductImage);
+          currentProductImage = null;
+        }
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
