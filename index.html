@@ -73,8 +73,11 @@
       position: relative;
       top: -8px;
       left: -8px;
-      /* Agora ficará oculto por padrão */
-      display: none;
+      /* Alterado: sempre ocupa espaço, mas fica invisível quando não há itens */
+      display: inline-block;
+      visibility: hidden;
+      min-width: 16px;
+      text-align: center;
     }
     /* Banner de Promoção (Texto Rolando) */
     .promo-banner {
@@ -473,14 +476,14 @@
     let currentProduct = null;
     let currentProductImage = null;
     
-    // Atualiza a contagem no ícone do carrinho: oculta se não houver itens
+    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
-        countElem.style.display = "inline-block";
+        countElem.style.visibility = "visible";
         countElem.innerText = cart.length;
       } else {
-        countElem.style.display = "none";
+        countElem.style.visibility = "hidden";
       }
     }
     
