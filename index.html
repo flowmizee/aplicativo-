@@ -63,7 +63,7 @@
       align-items: center;
       justify-content: center;
     }
-    /* Redimensiona o círculo da contagem do carrinho para ficar menor */
+    /* Redimensiona o círculo da contagem do carrinho */
     .cart-count {
       background: red;
       color: #fff;
@@ -73,6 +73,8 @@
       position: relative;
       top: -8px;
       left: -8px;
+      /* Agora ficará oculto por padrão */
+      display: none;
     }
     /* Banner de Promoção (Texto Rolando) */
     .promo-banner {
@@ -471,9 +473,15 @@
     let currentProduct = null;
     let currentProductImage = null;
     
-    // Atualiza o número exibido no ícone do carrinho
+    // Atualiza a contagem no ícone do carrinho: oculta se não houver itens
     function updateCartCount() {
-      document.getElementById("cart-count").innerText = cart.length > 0 ? cart.length : "";
+      const countElem = document.getElementById("cart-count");
+      if (cart.length > 0) {
+        countElem.style.display = "inline-block";
+        countElem.innerText = cart.length;
+      } else {
+        countElem.style.display = "none";
+      }
     }
     
     window.addEventListener("load", () => {
