@@ -42,14 +42,15 @@
     .header-center .logo {
       width: 100px;
     }
-    /* Ícones (lupa e carrinho) no canto superior direito – ajustados para ficar mais próximos */
+    /* Ícones (lupa e carrinho) no canto superior direito */
     .header-right {
       position: absolute;
-      right: 5px;  /* Aproxima da borda direita */
-      top: 5px;    /* Aproxima do topo */
+      right: 10px; /* Ajustado para afastar mais para a direita */
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
-      gap: 10px;   /* Reduz o espaçamento entre os ícones */
+      gap: 20px;
     }
     /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
     .menu-icon,
@@ -62,19 +63,20 @@
       align-items: center;
       justify-content: center;
     }
-    /* Redimensiona o círculo da contagem do carrinho:
-       Agora, em vez de um círculo grande, terá um formato mais oval e menos volumoso */
+    /* Redimensiona o círculo da contagem do carrinho */
     .cart-count {
       background: red;
       color: #fff;
-      border-radius: 20px;  /* Valor alto para criar uma forma oval */
-      padding: 2px 6px;     /* Ajuste de padding para não ficar inchado */
+      border-radius: 50%;
+      padding: 1px 4px;
       font-size: 0.7rem;
       position: relative;
       top: -8px;
       left: -8px;
+      /* Alterado: sempre ocupa espaço, mas fica invisível quando não há itens */
       display: inline-block;
-      visibility: hidden;   /* Sempre ocupa espaço, mas fica invisível se não houver itens */
+      visibility: hidden;
+      min-width: 16px;
       text-align: center;
     }
     /* Banner de Promoção (Texto Rolando) */
@@ -474,7 +476,7 @@
     let currentProduct = null;
     let currentProductImage = null;
     
-    // Atualiza a contagem no ícone do carrinho: usando visibility para não alterar o layout
+    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -642,4 +644,44 @@
       const banner = document.querySelector(".promo-banner");
       const header = document.querySelector(".header");
       if (window.scrollY > 0) {
-        banner.classList.add("hidden"
+        banner.classList.add("hidden");
+        header.style.top = "0";
+      } else {
+        banner.classList.remove("hidden");
+        header.style.top = "40px";
+      }
+    });
+    
+    function showMeasureModal(product, productImg) {
+      currentProduct = product;
+      currentProductImage = productImg;
+      document.getElementById("measureImage").style.display = "block";
+      document.getElementById("measureVideo").style.display = "none";
+      document.getElementById("measureVideo").pause();
+      document.getElementById("measureModal").style.display = "block";
+    }
+    
+    function closeModal() {
+      document.getElementById("measureModal").style.display = "none";
+      currentProduct = null;
+    }
+    
+    function showVideo() {
+      document.getElementById("measureImage").style.display = "none";
+      document.getElementById("measureVideo").style.display = "block";
+      document.getElementById("measureVideo").play();
+    }
+    
+    function continueToCart() {
+      if(currentProduct) {
+        addToCart(currentProduct);
+        if (currentProductImage) {
+          flyToCart(currentProductImage);
+          currentProductImage = null;
+        }
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
