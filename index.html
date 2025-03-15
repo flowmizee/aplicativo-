@@ -650,4 +650,41 @@
         banner.classList.add("hidden");
         header.style.top = "0";
       } else {
-        banner.classL
+        banner.classList.remove("hidden");
+        header.style.top = "40px";
+      }
+    });
+    
+    function showMeasureModal(product, productImg) {
+      currentProduct = product;
+      currentProductImage = productImg;
+      document.getElementById("measureImage").style.display = "block";
+      document.getElementById("measureVideo").style.display = "none";
+      document.getElementById("measureVideo").pause();
+      document.getElementById("measureModal").style.display = "block";
+    }
+    
+    function closeModal() {
+      document.getElementById("measureModal").style.display = "none";
+      currentProduct = null;
+    }
+    
+    function showVideo() {
+      document.getElementById("measureImage").style.display = "none";
+      document.getElementById("measureVideo").style.display = "block";
+      document.getElementById("measureVideo").play();
+    }
+    
+    function continueToCart() {
+      if(currentProduct) {
+        addToCart(currentProduct);
+        if (currentProductImage) {
+          flyToCart(currentProductImage);
+          currentProductImage = null;
+        }
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
