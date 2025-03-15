@@ -653,4 +653,55 @@
       download: true,
       header: true,
       complete: function(results) {
-        allProducts = results.data.filter(item => item.Nome && item.Nome.
+        allProducts = results.data.filter(item => item.Nome && item.Nome.trim() !== "");
+        filterProducts();
+      }
+    });
+    
+    // Ajusta cabeçalho e banner ao rolar a página
+    window.addEventListener("scroll", function() {
+      const banner = document.querySelector(".promo-banner");
+      const header = document.querySelector(".header");
+      if (window.scrollY > 0) {
+        banner.classList.add("hidden");
+        header.style.top = "0";
+      } else {
+        banner.classList.remove("hidden");
+        header.style.top = "40px";
+      }
+    });
+    
+    // Funções para o Modal de Medição (apenas para produtos anéis)
+    function showMeasureModal(product, productImg) {
+      currentProduct = product;
+      currentProductImage = productImg; // Armazena a imagem para animar após confirmação
+      document.getElementById("measureImage").style.display = "block";
+      document.getElementById("measureVideo").style.display = "none";
+      document.getElementById("measureVideo").pause();
+      document.getElementById("measureModal").style.display = "block";
+    }
+    
+    function closeModal() {
+      document.getElementById("measureModal").style.display = "none";
+      currentProduct = null;
+    }
+    
+    function showVideo() {
+      document.getElementById("measureImage").style.display = "none";
+      document.getElementById("measureVideo").style.display = "block";
+      document.getElementById("measureVideo").play();
+    }
+    
+    function continueToCart() {
+      if(currentProduct) {
+        addToCart(currentProduct);
+        if (currentProductImage) {
+          flyToCart(currentProductImage);
+          currentProductImage = null;
+        }
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
