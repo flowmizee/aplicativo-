@@ -12,7 +12,7 @@
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow-x: hidden; /* Impede que conteúdos fora da tela apareçam */
+      overflow-x: hidden; /* Garante que conteúdos fora da tela não apareçam */
     }
     /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
     .header {
@@ -150,17 +150,16 @@
     .sidebar {
       position: fixed;
       top: 0;
-      left: 0;
+      left: -250px; /* Escondida totalmente fora da tela */
       width: 250px;
       height: 100vh;
       background: #fff;
       padding: 90px 20px 20px;
       box-sizing: border-box;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      transition: left 0.3s ease;
       z-index: 999;
     }
-    .sidebar.open { transform: translateX(0); }
+    .sidebar.open { left: 0; }
     .sidebar a {
       display: block;
       color: #000;
