@@ -150,16 +150,22 @@
     .sidebar {
       position: fixed;
       top: 0;
-      left: -250px; /* Escondida totalmente fora da tela */
+      left: 0;
       width: 250px;
       height: 100vh;
       background: #fff;
       padding: 90px 20px 20px;
       box-sizing: border-box;
-      transition: left 0.3s ease;
+      /* Esconde totalmente com transform e opacidade */
+      transform: translateX(-100%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
       z-index: 999;
     }
-    .sidebar.open { left: 0; }
+    .sidebar.open {
+      transform: translateX(0);
+      opacity: 1;
+    }
     .sidebar a {
       display: block;
       color: #000;
