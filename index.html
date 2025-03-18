@@ -12,7 +12,7 @@
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow-x: hidden;
+      overflow-x: hidden; /* Garante que conteúdos fora da tela não apareçam */
     }
     /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
     .header {
@@ -26,12 +26,14 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       z-index: 1000;
     }
+    /* Menu no canto superior esquerdo */
     .header-left {
       position: absolute;
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
     }
+    /* Logo centralizada */
     .header-center {
       position: absolute;
       left: 50%;
@@ -41,6 +43,7 @@
     .header-center .logo {
       width: 100px;
     }
+    /* Ícones (lupa e carrinho) no canto superior direito */
     .header-right {
       position: absolute;
       right: 5px;
@@ -50,6 +53,7 @@
       align-items: center;
       gap: 15px;
     }
+    /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
     .menu-icon,
     .header-right img.icon {
       font-size: 28px;
@@ -60,6 +64,7 @@
       align-items: center;
       justify-content: center;
     }
+    /* Redimensiona o círculo da contagem do carrinho */
     .cart-count {
       background: red;
       color: #fff;
@@ -74,7 +79,7 @@
       min-width: 16px;
       text-align: center;
     }
-    /* Banner de Promoção */
+    /* Banner de Promoção (Texto Rolando) */
     .promo-banner {
       position: fixed;
       top: 0;
@@ -116,7 +121,7 @@
     }
     .search-input {
       position: fixed;
-      top: -60px;
+      top: -60px; /* Inicia oculto acima da viewport */
       padding: 10px 15px;
       font-size: 18px;
       border: 2px solid #f8c91c;
@@ -133,7 +138,7 @@
     .search-input.active {
       opacity: 1;
       visibility: visible;
-      top: 120px;
+      top: 120px; /* Fica um pouco abaixo */
     }
     @media screen and (min-width: 768px) {
       .search-input { width: 400px; }
@@ -141,7 +146,7 @@
     @media screen and (min-width: 1024px) {
       .search-input { width: 500px; }
     }
-    /* Sidebar */
+    /* Sidebar com Instagram e WhatsApp */
     .sidebar {
       position: fixed;
       top: 0;
@@ -151,6 +156,7 @@
       background: #fff;
       padding: 90px 20px 20px;
       box-sizing: border-box;
+      /* Esconde totalmente com transform e opacidade */
       transform: translateX(-100%);
       opacity: 0;
       transition: transform 0.3s ease, opacity 0.3s ease;
@@ -245,9 +251,6 @@
       text-align: center;
       border: 1px solid transparent;
     }
-    .product-image-container {
-      position: relative;
-    }
     .product-image {
       width: 100%;
       height: auto;
@@ -255,15 +258,58 @@
       outline: 2px solid #fff;
       outline-offset: 5px;
     }
-    /* Ícone de Favorito – apenas o ícone, sem fundo extra */
-    .favorite-icon {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      transition: transform 0.2s;
+    .product-description h2 {
+      margin: 10px 0;
+      font-size: 1.5rem;
     }
-    .favorite-icon:hover {
-      transform: scale(1.1);
+    .product-description p {
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+    .prices {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .prices .old-price {
+      color: gray;
+      text-decoration: line-through;
+      font-size: 1rem;
+    }
+    .prices .new-price {
+      color: #02FF85;
+      font-size: 1rem;
+    }
+    .buy-button {
+      display: block;
+      width: 100%;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      padding: 10px 0;
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    @keyframes buttonClick {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    .button-animate {
+      animation: buttonClick 0.2s ease;
+    }
+    @keyframes iconClick {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .icon-animate {
+      animation: iconClick 0.2s ease;
     }
     /* Estilos do Modal */
     .modal {
@@ -323,7 +369,7 @@
   <div class="promo-banner">
     <p>Parcele em até 5x sem juros | Frete grátis acima de R$ 300</p>
   </div>
-  <!-- Cabeçalho -->
+  <!-- Cabeçalho com três áreas posicionadas de forma absoluta -->
   <header class="header">
     <div class="header-left">
       <span class="menu-icon" onclick="animateIcon(this); toggleSidebar()">☰</span>
@@ -373,7 +419,7 @@
       <option value="Pingentes">Pingentes</option>
     </select>
   </div>
-  <!-- Contagem de produtos -->
+  <!-- Quantidade de produtos -->
   <span id="product-count"></span>
   <!-- Título da Seção -->
   <h1 class="products-title">Todos os Produtos</h1>
@@ -402,10 +448,12 @@
   </div>
   
   <script>
-    // Funções de normalização e singularização
+    // Normaliza o texto removendo acentos e convertendo para minúsculas
     function normalizeText(text) {
       return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
+    
+    // Converte termos para sua forma singular
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -421,6 +469,8 @@
       }
       return result;
     }
+    
+    // Termos por categoria (em forma singular)
     const categoryTerms = {
       "Anéis": ["anel"],
       "Pulseiras": ["pulseira"],
@@ -428,14 +478,14 @@
       "Brincos": ["brinco"],
       "Pingentes": ["pingente"]
     };
-
-    // Inicializa carrinho e favoritos
+    
+    // Recupera o carrinho ou inicializa um array vazio
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     let allProducts = [];
     let currentProduct = null;
     let currentProductImage = null;
     
+    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -524,20 +574,6 @@
       window.location.href = "produtos.html";
     }
     
-    // Alterna o favorito do produto, trocando a imagem conforme o estado
-    function toggleFavorite(event, productName) {
-      event.stopPropagation();
-      let icon = event.currentTarget;
-      if (favorites.includes(productName)) {
-        favorites = favorites.filter(item => item !== productName);
-        icon.src = "https://img.icons8.com/ios/50/hearts--v1.png?color=ffffff";
-      } else {
-        favorites.push(productName);
-        icon.src = "https://img.icons8.com/ios-filled/50/hearts.png?color=ffffff";
-      }
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-    }
-    
     function handleBuy(product, button, productImg) {
       if (singularize(normalizeText(product.Nome)).includes("anel")) {
         showMeasureModal(product, productImg);
@@ -554,10 +590,7 @@
         const card = document.createElement("div");
         card.classList.add("product-card");
         let productHTML = `
-          <div class="product-image-container">
-            <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
-            <img src="https://img.icons8.com/ios/50/hearts--v1.png?color=ffffff" alt="Favoritar" class="favorite-icon" onclick="toggleFavorite(event, '${product.Nome}')">
-          </div>
+          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
           <div class="product-description">
             <h2>${product.Nome}</h2>
             <div class="prices">
@@ -649,7 +682,7 @@
     }
     
     function continueToCart() {
-      if (currentProduct) {
+      if(currentProduct) {
         addToCart(currentProduct);
         if (currentProductImage) {
           flyToCart(currentProductImage);
