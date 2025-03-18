@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Favoritos - Flowmize Acessórios</title>
+  <style>
+    /* Estilos Básicos para a Página de Favoritos */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      background: #000;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #favorites-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .favorite-card {
+      background: #111;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      width: 300px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .favorite-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .favorite-card h2 {
+      margin: 10px 0;
+      font-size: 1.5rem;
+    }
+    .favorite-card p {
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+    .remove-button {
+      background: red;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .back-button {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      margin: 20px auto;
+      display: block;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Meus Favoritos</div>
+  <div id="favorites-container"></div>
+  <button class="back-button" onclick="window.history.back()">Voltar</button>
+  
+  <script>
+    // Função para renderizar os produtos favoritados
+    function renderFavorites() {
+      // Lê os produtos salvos (ou um array vazio se não houver)
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      const container = document.getElementById("favorites-container");
+      container.innerHTML = "";
+      
+      if (favorites.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>Nenhum produto favoritado.</p>";
+      } else {
+        favorites.forEach((product, index) => {
+          const card = document.createElement("div");
+          card.className = "favorite-card";
+          card.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h2>${product.name}</h2>
+            <p><span style="text-decoration: line-through;">${product.oldPrice}</span></p>
+            <p>${product.newPrice}</p>
+            <p>${product.parcelas}</p>
+            <button class="remove-button" onclick="removeFavorite(${index})">Remover dos Favoritos</button>
+          `;
+          container.appendChild(card);
+        });
+      }
+    }
+    
+    // Função para remover um produto dos favoritos
+    function removeFavorite(index) {
+      let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      favorites.splice(index, 1);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      renderFavorites();
+    }
+    
+    renderFavorites();
+  </script>
+</body>
+</html>
