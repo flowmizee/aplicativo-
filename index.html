@@ -613,10 +613,24 @@
           </div>`;
         card.innerHTML = productHTML;
         container.appendChild(card);
+        
         const buyButton = card.querySelector(".buy-button");
+        const productImg = card.querySelector('.product-image');
         buyButton.addEventListener("click", () => {
-          const productImg = card.querySelector('.product-image');
           handleBuy(product, buyButton, productImg);
+        });
+        
+        // Evento para alternar o ícone de favorito
+        const favoriteIcon = card.querySelector('.favorite-icon');
+        favoriteIcon.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (favoriteIcon.classList.contains("favorited")) {
+            favoriteIcon.classList.remove("favorited");
+            favoriteIcon.src = "https://img.icons8.com/fluency-systems-regular/48/FFFFFF/hearts.png";
+          } else {
+            favoriteIcon.classList.add("favorited");
+            favoriteIcon.src = "https://img.icons8.com/fluency-systems-filled/48/FFFFFF/hearts.png";
+          }
         });
       });
       document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
