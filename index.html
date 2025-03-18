@@ -251,7 +251,7 @@
       text-align: center;
       border: 1px solid transparent;
     }
-    /* Para posicionar o ícone de favoritar sobre a imagem */
+    /* Contêiner para a imagem com o ícone de favoritar */
     .product-image-container {
       position: relative;
     }
@@ -262,7 +262,7 @@
       outline: 2px solid #fff;
       outline-offset: 5px;
     }
-    /* Estilos do ícone de Favoritar – sem fundo extra, somente o ícone */
+    /* Ícone de Favoritar – posicionado sobre a imagem, sem alterar a estrutura */
     .favorite-icon {
       position: absolute;
       top: 5px;
@@ -567,7 +567,7 @@
       window.location.href = "produtos.html";
     }
     
-    // Função para alternar o estado de favorito
+    // Função para alternar o estado de favorito (troca o ícone)
     function toggleFavorite(event, productName) {
       event.stopPropagation();
       let icon = event.currentTarget;
@@ -596,7 +596,7 @@
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
-        // Verifica se o produto está favoritado para definir o ícone correto
+        // Define o ícone de favorito de acordo com o estado (favorito ou não)
         let isFavorited = favorites.includes(product.Nome);
         let favoriteIconSrc = isFavorited
           ? "https://img.icons8.com/fluency-systems-filled/48/FFFFFF/hearts.png"
