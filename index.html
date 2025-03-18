@@ -14,10 +14,10 @@
       font-family: Arial, sans-serif;
       overflow-x: hidden;
     }
-    /* Cabeçalho */
+    /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
     .header {
       position: fixed;
-      top: 40px;
+      top: 40px; /* Espaço para o banner */
       left: 0;
       width: 100%;
       height: 60px;
@@ -103,7 +103,7 @@
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
     }
-    /* Pesquisa */
+    /* Input de Pesquisa – posição fixa */
     .search-container {
       position: fixed;
       top: 0;
@@ -181,7 +181,7 @@
       display: block;
       border-radius: 8px;
     }
-    /* Filtros */
+    /* Área de Filtros */
     #filter-container {
       display: flex;
       flex-direction: column;
@@ -226,7 +226,7 @@
       font-weight: bold;
       margin: 10px auto;
     }
-    /* Produtos */
+    /* Container dos Produtos */
     #products-container {
       display: flex;
       flex-wrap: wrap;
@@ -255,7 +255,7 @@
       outline: 2px solid #fff;
       outline-offset: 5px;
     }
-    /* Ícone de Favorito – sem fundo ou círculo; somente o ícone */
+    /* Ícone de Favorito – apenas o ícone, sem fundo extra */
     .favorite-icon {
       width: 20px;
       height: 20px;
@@ -265,7 +265,7 @@
     .favorite-icon:hover {
       transform: scale(1.1);
     }
-    /* Modal */
+    /* Estilos do Modal */
     .modal {
       display: none;
       position: fixed;
@@ -315,7 +315,7 @@
     }
     .modal-buttons button:hover { background: #e6b900; }
   </style>
-  <!-- Biblioteca PapaParse -->
+  <!-- Biblioteca PapaParse para ler CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
@@ -341,7 +341,7 @@
       </span>
     </div>
   </header>
-  <!-- Pesquisa -->
+  <!-- Input de Pesquisa -->
   <div class="search-container">
     <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar..." oninput="filterProducts()">
   </div>
@@ -361,7 +361,7 @@
       Seu navegador não suporta o elemento de vídeo.
     </video>
   </div>
-  <!-- Filtros -->
+  <!-- Área de Filtros -->
   <div id="filter-container">
     <input type="text" id="order-by" class="filter-input" value="Ordenar por" readonly>
     <select id="category" class="filter-input" onchange="filterProducts()">
@@ -373,14 +373,14 @@
       <option value="Pingentes">Pingentes</option>
     </select>
   </div>
-  <!-- Contagem de Produtos -->
+  <!-- Contagem de produtos -->
   <span id="product-count"></span>
   <!-- Título da Seção -->
   <h1 class="products-title">Todos os Produtos</h1>
   <!-- Container dos Produtos -->
   <div id="products-container"></div>
   
-  <!-- Modal para Medir Anel -->
+  <!-- Modal para Medir o Tamanho do Anel -->
   <div id="measureModal" class="modal">
     <div class="modal-content">
       <span class="modal-close" onclick="closeModal()">X</span>
@@ -524,17 +524,15 @@
       window.location.href = "produtos.html";
     }
     
-    // Alterna o favorito do produto, trocando a imagem de acordo com o estado
+    // Alterna o favorito do produto, trocando a imagem conforme o estado
     function toggleFavorite(event, productName) {
       event.stopPropagation();
       let icon = event.currentTarget;
       if (favorites.includes(productName)) {
         favorites = favorites.filter(item => item !== productName);
-        // Ícone outline com contornos brancos
         icon.src = "https://img.icons8.com/ios/50/hearts--v1.png?color=ffffff";
       } else {
         favorites.push(productName);
-        // Ícone preenchido completamente de branco
         icon.src = "https://img.icons8.com/ios-filled/50/hearts.png?color=ffffff";
       }
       localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -555,11 +553,10 @@
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
-        let isFavorited = favorites.includes(product.Nome) ? "favorited" : "";
         let productHTML = `
           <div class="product-image-container">
             <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
-            <img src="https://img.icons8.com/ios/50/hearts--v1.png?color=ffffff" alt="Favoritar" class="favorite-icon ${isFavorited}" onclick="toggleFavorite(event, '${product.Nome}')">
+            <img src="https://img.icons8.com/ios/50/hearts--v1.png?color=ffffff" alt="Favoritar" class="favorite-icon" onclick="toggleFavorite(event, '${product.Nome}')">
           </div>
           <div class="product-description">
             <h2>${product.Nome}</h2>
@@ -652,7 +649,7 @@
     }
     
     function continueToCart() {
-      if(currentProduct) {
+      if (currentProduct) {
         addToCart(currentProduct);
         if (currentProductImage) {
           flyToCart(currentProductImage);
