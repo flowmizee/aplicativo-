@@ -251,6 +251,10 @@
       text-align: center;
       border: 1px solid transparent;
     }
+    /* Para posicionar o ícone de favoritar sobre a imagem */
+    .product-image-container {
+      position: relative;
+    }
     .product-image {
       width: 100%;
       height: auto;
@@ -258,29 +262,20 @@
       outline: 2px solid #fff;
       outline-offset: 5px;
     }
-    .product-description h2 {
-      margin: 10px 0;
-      font-size: 1.5rem;
+    /* Estilos do ícone de Favoritar – sem fundo extra, somente o ícone */
+    .favorite-icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    .product-description p {
-      margin: 5px 0;
-      font-size: 1rem;
+    .favorite-icon:hover {
+      transform: scale(1.1);
     }
-    .prices {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-    .prices .old-price {
-      color: gray;
-      text-decoration: line-through;
-      font-size: 1rem;
-    }
-    .prices .new-price {
-      color: #02FF85;
-      font-size: 1rem;
-    }
+    /* Botão Comprar */
     .buy-button {
       display: block;
       width: 100%;
@@ -448,12 +443,13 @@
   </div>
   
   <script>
-    // Normaliza o texto removendo acentos e convertendo para minúsculas
+    // Inicializa o array de favoritos (armazenado no localStorage)
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    
+    // Funções de normalização e singularização
     function normalizeText(text) {
       return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
-    
-    // Converte termos para sua forma singular
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -469,8 +465,6 @@
       }
       return result;
     }
-    
-    // Termos por categoria (em forma singular)
     const categoryTerms = {
       "Anéis": ["anel"],
       "Pulseiras": ["pulseira"],
@@ -485,7 +479,6 @@
     let currentProduct = null;
     let currentProductImage = null;
     
-    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -555,7 +548,7 @@
     }
     
     function addToCart(product, button) {
-      if(button) {
+      if (button) {
         button.classList.add("button-animate");
         setTimeout(() => button.classList.remove("button-animate"), 200);
       }
@@ -574,6 +567,20 @@
       window.location.href = "produtos.html";
     }
     
+    // Função para alternar o estado de favorito
+    function toggleFavorite(event, productName) {
+      event.stopPropagation();
+      let icon = event.currentTarget;
+      if (favorites.includes(productName)) {
+        favorites = favorites.filter(item => item !== productName);
+        icon.src = "https://img.icons8.com/fluency-systems-regular/48/FFFFFF/hearts.png";
+      } else {
+        favorites.push(productName);
+        icon.src = "https://img.icons8.com/fluency-systems-filled/48/FFFFFF/hearts.png";
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+    
     function handleBuy(product, button, productImg) {
       if (singularize(normalizeText(product.Nome)).includes("anel")) {
         showMeasureModal(product, productImg);
@@ -589,8 +596,16 @@
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
+        // Verifica se o produto está favoritado para definir o ícone correto
+        let isFavorited = favorites.includes(product.Nome);
+        let favoriteIconSrc = isFavorited
+          ? "https://img.icons8.com/fluency-systems-filled/48/FFFFFF/hearts.png"
+          : "https://img.icons8.com/fluency-systems-regular/48/FFFFFF/hearts.png";
         let productHTML = `
-          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
+          <div class="product-image-container">
+            <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
+            <img src="${favoriteIconSrc}" alt="Favoritar" class="favorite-icon" onclick="toggleFavorite(event, '${product.Nome}')">
+          </div>
           <div class="product-description">
             <h2>${product.Nome}</h2>
             <div class="prices">
@@ -682,7 +697,7 @@
     }
     
     function continueToCart() {
-      if(currentProduct) {
+      if (currentProduct) {
         addToCart(currentProduct);
         if (currentProductImage) {
           flyToCart(currentProductImage);
