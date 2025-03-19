@@ -53,10 +53,9 @@
       align-items: center;
       gap: 15px;
     }
-    /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
+    /* Define todos os ícones com o mesmo tamanho */
     .menu-icon,
     .header-right img.icon {
-      font-size: 28px;
       width: 28px;
       height: 28px;
       cursor: pointer;
@@ -479,13 +478,13 @@
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
     <span id="nav-home" onclick="navigateWithIcon(this, 'index.html', 'home')">
-      <img src="https://img.icons8.com/fluency-systems-filled/48/home.png" alt="Home">
+      <img src="https://img.icons8.com/fluency-systems-regular/48/home.png" alt="Home">
     </span>
     <span id="nav-favorites" onclick="navigateWithIcon(this, 'favorites.html', 'favorites')">
       <img src="https://img.icons8.com/fluency-systems-regular/48/favorites.png" alt="Favoritos">
     </span>
     <span id="nav-tracking" onclick="navigateWithIcon(this, 'tracking.html', 'tracking')">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/parcel.png" alt="Rastrear Encomenda">
+      <img src="https://img.icons8.com/fluency-systems-regular/48/parcel.png" alt="Rastrear Encomenda">
     </span>
   </nav>
   
@@ -521,7 +520,7 @@
       "Pingentes": ["pingente"]
     };
     
-    // Funções do carrinho (já existentes)
+    // Funções do carrinho e variáveis globais
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let allProducts = [];
     let currentProduct = null;
@@ -643,11 +642,11 @@
       if (isFavorite(product)) {
         favs = favs.filter(fav => fav.Nome !== product.Nome);
         iconElement.classList.remove("favorited");
-        iconElement.src = "https://img.icons8.com/ios/50/ffffff/like--v1.png";
+        iconElement.src = "https://img.icons8.com/fluency-systems-regular/48/like.png";
       } else {
         favs.push(product);
         iconElement.classList.add("favorited");
-        iconElement.src = "https://img.icons8.com/ios-filled/50/ffffff/like.png";
+        iconElement.src = "https://img.icons8.com/fluency-systems-filled/48/like.png";
       }
       setFavorites(favs);
     }
@@ -680,10 +679,10 @@
         // Define o estado do ícone de favorito conforme o produto já estiver ou não nos favoritos
         if(isFavorite(product)) {
           favoriteIcon.classList.add("favorited");
-          favoriteIcon.src = "https://img.icons8.com/ios-filled/50/ffffff/like.png";
+          favoriteIcon.src = "https://img.icons8.com/fluency-systems-filled/48/like.png";
         } else {
           favoriteIcon.classList.remove("favorited");
-          favoriteIcon.src = "https://img.icons8.com/ios/50/ffffff/like--v1.png";
+          favoriteIcon.src = "https://img.icons8.com/fluency-systems-regular/48/like.png";
         }
         
         buyButton.addEventListener("click", () => {
@@ -786,6 +785,8 @@
         element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/home.png";
       } else if(type === 'favorites') {
         element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
+      } else if(type === 'tracking') {
+        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/parcel.png";
       }
       setTimeout(() => {
         window.location.href = url;
@@ -797,12 +798,19 @@
       const currentPage = window.location.pathname.split("/").pop();
       const homeIcon = document.querySelector('#nav-home img');
       const favoritesIcon = document.querySelector('#nav-favorites img');
+      const trackingIcon = document.querySelector('#nav-tracking img');
       if(currentPage === "index.html" || currentPage === "") {
         homeIcon.src = "https://img.icons8.com/fluency-systems-filled/48/home.png";
         favoritesIcon.src = "https://img.icons8.com/fluency-systems-regular/48/favorites.png";
+        trackingIcon.src = "https://img.icons8.com/fluency-systems-regular/48/parcel.png";
       } else if(currentPage === "favorites.html") {
         homeIcon.src = "https://img.icons8.com/fluency-systems-regular/48/home.png";
         favoritesIcon.src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
+        trackingIcon.src = "https://img.icons8.com/fluency-systems-regular/48/parcel.png";
+      } else if(currentPage === "tracking.html") {
+        homeIcon.src = "https://img.icons8.com/fluency-systems-regular/48/home.png";
+        favoritesIcon.src = "https://img.icons8.com/fluency-systems-regular/48/favorites.png";
+        trackingIcon.src = "https://img.icons8.com/fluency-systems-filled/48/parcel.png";
       }
     });
     
