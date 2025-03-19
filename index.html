@@ -53,9 +53,10 @@
       align-items: center;
       gap: 15px;
     }
-    /* Define todos os ícones com o mesmo tamanho */
+    /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
     .menu-icon,
     .header-right img.icon {
+      font-size: 28px;
       width: 28px;
       height: 28px;
       cursor: pointer;
@@ -155,6 +156,7 @@
       background: #fff;
       padding: 90px 20px 20px;
       box-sizing: border-box;
+      /* Esconde totalmente com transform e opacidade */
       transform: translateX(-100%);
       opacity: 0;
       transition: transform 0.3s ease, opacity 0.3s ease;
@@ -248,7 +250,6 @@
       box-sizing: border-box;
       text-align: center;
       border: 1px solid transparent;
-      position: relative; /* Para posicionar o ícone de favorito */
     }
     .product-image {
       width: 100%;
@@ -256,15 +257,6 @@
       border-radius: 8px;
       outline: 2px solid #fff;
       outline-offset: 5px;
-    }
-    .favorite-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      z-index: 1500;
     }
     .product-description h2 {
       margin: 10px 0;
@@ -368,26 +360,6 @@
       font-weight: bold;
     }
     .modal-buttons button:hover { background: #e6b900; }
-    
-    /* Bottom Navigation Bar */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #000;
-      border-top: 1px solid rgba(255,255,255,0.2);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 1000;
-    }
-    .bottom-nav img {
-      width: 48px;
-      height: 48px;
-      cursor: pointer;
-    }
   </style>
   <!-- Biblioteca PapaParse para ler CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -475,26 +447,13 @@
     </div>
   </div>
   
-  <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <span id="nav-home" onclick="navigateWithIcon(this, 'index.html', 'home')">
-      <img src="https://img.icons8.com/fluency-systems-regular/48/home.png" alt="Home">
-    </span>
-    <span id="nav-favorites" onclick="navigateWithIcon(this, 'favorites.html', 'favorites')">
-      <img src="https://img.icons8.com/fluency-systems-regular/48/favorites.png" alt="Favoritos">
-    </span>
-    <span id="nav-tracking" onclick="navigateWithIcon(this, 'tracking.html', 'tracking')">
-      <img src="https://img.icons8.com/fluency-systems-regular/48/parcel.png" alt="Rastrear Encomenda">
-    </span>
-  </nav>
-  
   <script>
-    // Função para normalizar o texto (remover acentos e converter para minúsculas)
+    // Normaliza o texto removendo acentos e convertendo para minúsculas
     function normalizeText(text) {
       return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
     
-    // Função para converter termos para sua forma singular
+    // Converte termos para sua forma singular
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -520,12 +479,13 @@
       "Pingentes": ["pingente"]
     };
     
-    // Funções do carrinho e variáveis globais
+    // Recupera o carrinho ou inicializa um array vazio
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let allProducts = [];
     let currentProduct = null;
     let currentProductImage = null;
     
+    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -623,34 +583,6 @@
       }
     }
     
-    // Funções de gerenciamento de Favoritos
-    function getFavorites() {
-      return JSON.parse(localStorage.getItem("favorites")) || [];
-    }
-    
-    function setFavorites(favs) {
-      localStorage.setItem("favorites", JSON.stringify(favs));
-    }
-    
-    function isFavorite(product) {
-      let favs = getFavorites();
-      return favs.some(fav => fav.Nome === product.Nome);
-    }
-    
-    function toggleFavorite(product, iconElement) {
-      let favs = getFavorites();
-      if (isFavorite(product)) {
-        favs = favs.filter(fav => fav.Nome !== product.Nome);
-        iconElement.classList.remove("favorited");
-        iconElement.src = "https://img.icons8.com/fluency-systems-regular/48/like.png";
-      } else {
-        favs.push(product);
-        iconElement.classList.add("favorited");
-        iconElement.src = "https://img.icons8.com/fluency-systems-filled/48/like.png";
-      }
-      setFavorites(favs);
-    }
-    
     function renderProducts(products) {
       const container = document.getElementById("products-container");
       container.innerHTML = "";
@@ -659,7 +591,6 @@
         card.classList.add("product-card");
         let productHTML = `
           <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
-          <img src="" alt="Favorite" class="favorite-icon">
           <div class="product-description">
             <h2>${product.Nome}</h2>
             <div class="prices">
@@ -671,27 +602,10 @@
           </div>`;
         card.innerHTML = productHTML;
         container.appendChild(card);
-        
         const buyButton = card.querySelector(".buy-button");
-        const productImg = card.querySelector('.product-image');
-        const favoriteIcon = card.querySelector('.favorite-icon');
-        
-        // Define o estado do ícone de favorito conforme o produto já estiver ou não nos favoritos
-        if(isFavorite(product)) {
-          favoriteIcon.classList.add("favorited");
-          favoriteIcon.src = "https://img.icons8.com/fluency-systems-filled/48/like.png";
-        } else {
-          favoriteIcon.classList.remove("favorited");
-          favoriteIcon.src = "https://img.icons8.com/fluency-systems-regular/48/like.png";
-        }
-        
         buyButton.addEventListener("click", () => {
+          const productImg = card.querySelector('.product-image');
           handleBuy(product, buyButton, productImg);
-        });
-        
-        favoriteIcon.addEventListener("click", (e) => {
-          e.stopPropagation();
-          toggleFavorite(product, favoriteIcon);
         });
       });
       document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
@@ -725,7 +639,6 @@
       renderProducts(filtered);
     }
     
-    // Leitura do CSV com os produtos
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhaZYu5u9AzBY2hQPymf2Tf6FNnWclXELvpuifdXsiZTFgYF1uPAVybfJUob8ydsfTXeqTVfJ7dyF9/pub?output=csv";
     Papa.parse(csvUrl, {
       download: true,
@@ -778,42 +691,6 @@
         closeModal();
       }
     }
-    
-    // Função para alternar o ícone da bottom nav e navegar com efeito
-    function navigateWithIcon(element, url, type) {
-      if(type === 'home') {
-        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/home.png";
-      } else if(type === 'favorites') {
-        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
-      } else if(type === 'tracking') {
-        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/parcel.png";
-      }
-      setTimeout(() => {
-        window.location.href = url;
-      }, 150);
-    }
-    
-    // Define os ícones ativos na bottom nav de acordo com a página atual
-    window.addEventListener("DOMContentLoaded", () => {
-      const currentPage = window.location.pathname.split("/").pop();
-      const homeIcon = document.querySelector('#nav-home img');
-      const favoritesIcon = document.querySelector('#nav-favorites img');
-      const trackingIcon = document.querySelector('#nav-tracking img');
-      if(currentPage === "index.html" || currentPage === "") {
-        homeIcon.src = "https://img.icons8.com/fluency-systems-filled/48/home.png";
-        favoritesIcon.src = "https://img.icons8.com/fluency-systems-regular/48/favorites.png";
-        trackingIcon.src = "https://img.icons8.com/fluency-systems-regular/48/parcel.png";
-      } else if(currentPage === "favorites.html") {
-        homeIcon.src = "https://img.icons8.com/fluency-systems-regular/48/home.png";
-        favoritesIcon.src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
-        trackingIcon.src = "https://img.icons8.com/fluency-systems-regular/48/parcel.png";
-      } else if(currentPage === "tracking.html") {
-        homeIcon.src = "https://img.icons8.com/fluency-systems-regular/48/home.png";
-        favoritesIcon.src = "https://img.icons8.com/fluency-systems-regular/48/favorites.png";
-        trackingIcon.src = "https://img.icons8.com/fluency-systems-filled/48/parcel.png";
-      }
-    });
-    
   </script>
 </body>
 </html>
