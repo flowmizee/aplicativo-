@@ -5,112 +5,222 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Favoritos - Flowmize Acessórios</title>
   <style>
-    /* Estilos Básicos para a Página de Favoritos */
+    /* Estilos básicos para manter a identidade visual */
     body {
       margin: 0;
       padding: 0;
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
+      overflow-x: hidden;
     }
-    .header {
-      background: #000;
-      padding: 20px;
+    .products-title {
       text-align: center;
       font-size: 2rem;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-weight: bold;
+      margin: 20px 0;
     }
-    #favorites-container {
+    #products-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .favorite-card {
-      background: #111;
+    .product-card {
+      background: transparent;
       margin: 10px;
       padding: 10px;
       border-radius: 8px;
       width: 300px;
+      box-sizing: border-box;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid transparent;
+      position: relative;
     }
-    .favorite-card img {
+    .product-image {
       width: 100%;
+      height: auto;
       border-radius: 8px;
+      outline: 2px solid #fff;
+      outline-offset: 5px;
     }
-    .favorite-card h2 {
+    .favorite-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      z-index: 1500;
+    }
+    .product-description h2 {
       margin: 10px 0;
       font-size: 1.5rem;
     }
-    .favorite-card p {
-      margin: 5px 0;
+    .prices {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .prices .old-price {
+      color: gray;
+      text-decoration: line-through;
       font-size: 1rem;
     }
-    .remove-button {
-      background: red;
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      margin-top: 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
+    .prices .new-price {
+      color: #02FF85;
+      font-size: 1rem;
     }
-    .back-button {
+    .buy-button {
+      display: block;
+      width: 100%;
+      border: 1px solid #000;
       background: #fff;
       color: #000;
-      border: none;
-      padding: 10px 20px;
-      margin: 20px auto;
-      display: block;
+      padding: 10px 0;
+      font-size: 1.3rem;
       cursor: pointer;
-      border-radius: 5px;
+      margin-top: 10px;
+      border-radius: 30px;
       font-weight: bold;
+      text-transform: uppercase;
+    }
+    /* Barra de navegação inferior */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #000;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+    .bottom-nav img {
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="header">Meus Favoritos</div>
-  <div id="favorites-container"></div>
-  <button class="back-button" onclick="window.history.back()">Voltar</button>
+  <h1 class="products-title">Produtos Favoritos</h1>
+  <div id="products-container"></div>
+  
+  <!-- Barra de navegação inferior -->
+  <nav class="bottom-nav">
+    <span id="nav-home" onclick="navigateWithIcon(this, 'index.html', 'home')">
+      <img src="https://img.icons8.com/fluency-systems-regular/48/home.png" alt="Home">
+    </span>
+    <span id="nav-favorites" onclick="navigateWithIcon(this, 'favorites.html', 'favorites')">
+      <img src="https://img.icons8.com/fluency-systems-filled/48/favorites.png" alt="Favoritos">
+    </span>
+    <span id="nav-tracking" onclick="navigateWithIcon(this, 'tracking.html', 'tracking')">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/parcel.png" alt="Rastrear Encomenda">
+    </span>
+  </nav>
   
   <script>
-    // Função para renderizar os produtos favoritados
-    function renderFavorites() {
-      // Lê os produtos salvos (ou um array vazio se não houver)
-      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-      const container = document.getElementById("favorites-container");
-      container.innerHTML = "";
-      
-      if (favorites.length === 0) {
-        container.innerHTML = "<p style='text-align:center;'>Nenhum produto favoritado.</p>";
-      } else {
-        favorites.forEach((product, index) => {
-          const card = document.createElement("div");
-          card.className = "favorite-card";
-          card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h2>${product.name}</h2>
-            <p><span style="text-decoration: line-through;">${product.oldPrice}</span></p>
-            <p>${product.newPrice}</p>
-            <p>${product.parcelas}</p>
-            <button class="remove-button" onclick="removeFavorite(${index})">Remover dos Favoritos</button>
-          `;
-          container.appendChild(card);
-        });
-      }
+    // Funções de gerenciamento de Favoritos
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem("favorites")) || [];
     }
     
-    // Função para remover um produto dos favoritos
-    function removeFavorite(index) {
-      let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-      favorites.splice(index, 1);
-      localStorage.setItem("favorites", JSON.stringify(favorites));
+    function setFavorites(favs) {
+      localStorage.setItem("favorites", JSON.stringify(favs));
+    }
+    
+    function isFavorite(product) {
+      let favs = getFavorites();
+      return favs.some(fav => fav.Nome === product.Nome);
+    }
+    
+    function toggleFavorite(product, iconElement) {
+      let favs = getFavorites();
+      if (isFavorite(product)) {
+        favs = favs.filter(fav => fav.Nome !== product.Nome);
+        iconElement.classList.remove("favorited");
+        iconElement.src = "https://img.icons8.com/ios/50/ffffff/like--v1.png";
+      } else {
+        favs.push(product);
+        iconElement.classList.add("favorited");
+        iconElement.src = "https://img.icons8.com/ios-filled/50/ffffff/like.png";
+      }
+      setFavorites(favs);
       renderFavorites();
     }
     
-    renderFavorites();
+    function renderFavorites() {
+      const container = document.getElementById("products-container");
+      const favorites = getFavorites();
+      container.innerHTML = "";
+      if (favorites.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>Nenhum produto favorito.</p>";
+        return;
+      }
+      favorites.forEach(product => {
+        const card = document.createElement("div");
+        card.classList.add("product-card");
+        let productHTML = `
+          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
+          <img src="" alt="Favorite" class="favorite-icon">
+          <div class="product-description">
+            <h2>${product.Nome}</h2>
+            <div class="prices">
+              <p class="old-price">${product["Preço Antigo"]}</p>
+              <p class="new-price">${product["Preço Novo"]}</p>
+            </div>
+            <button class="buy-button" onclick="buyProduct('${product.Nome}')">Comprar</button>
+          </div>`;
+        card.innerHTML = productHTML;
+        container.appendChild(card);
+        
+        const favoriteIcon = card.querySelector('.favorite-icon');
+        // Como o produto está favoritado, o ícone aparece preenchido
+        favoriteIcon.classList.add("favorited");
+        favoriteIcon.src = "https://img.icons8.com/ios-filled/50/ffffff/like.png";
+        favoriteIcon.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleFavorite(product, favoriteIcon);
+        });
+      });
+    }
+    
+    function buyProduct(productName) {
+      // Função para tratar a compra – pode redirecionar para a página do produto ou adicionar ao carrinho
+      alert("Comprar " + productName);
+    }
+    
+    // Função para alternar o ícone da barra inferior e navegar com efeito
+    function navigateWithIcon(element, url, type) {
+      if(type === 'home') {
+        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/home.png";
+      } else if(type === 'favorites') {
+        element.querySelector('img').src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
+      }
+      setTimeout(() => {
+        window.location.href = url;
+      }, 150);
+    }
+    
+    // Define os ícones ativos conforme a página atual
+    window.addEventListener("DOMContentLoaded", () => {
+      const currentPage = window.location.pathname.split("/").pop();
+      const homeIcon = document.querySelector('#nav-home img');
+      const favoritesIcon = document.querySelector('#nav-favorites img');
+      if(currentPage === "favorites.html") {
+        homeIcon.src = "https://img.icons8.com/fluency-systems-regular/48/home.png";
+        favoritesIcon.src = "https://img.icons8.com/fluency-systems-filled/48/favorites.png";
+      }
+    });
+    
+    window.addEventListener("load", renderFavorites);
   </script>
 </body>
 </html>
