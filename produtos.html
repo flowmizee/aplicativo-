@@ -291,7 +291,7 @@
           formContainer.style.transform = 'translateY(100%)';
           setTimeout(() => {
             formContainer.classList.remove("show");
-            formContainer.style.transform = ''; // reseta a transformação
+            formContainer.style.transform = '';
           }, 300);
         } else {
           formContainer.style.transition = 'transform 0.3s ease-out';
@@ -300,7 +300,7 @@
       }, false);
     }
     
-    // Finaliza a compra e envia os dados via WhatsApp com formatação ajustada para evitar erros de exibição
+    // Finaliza a compra e envia os dados via WhatsApp com mensagem personalizada e emojis
     function finalizePurchase() {
       const nome = document.getElementById("nome").value.trim();
       const estado = document.getElementById("estado").value.trim();
@@ -317,16 +317,16 @@
       
       let pagamentoInfo = "";
       if (pagamento === "pix") {
-        pagamentoInfo = "Forma de pagamento: Pix\nChave Pix: 98981420070";
+        pagamentoInfo = "💸 Pix - Chave: 98981420070";
       } else if (pagamento === "credito") {
-        pagamentoInfo = "Forma de pagamento: Cartão de Crédito\nLink para Pagamento: https://link.mercadopago.com.br/flowmize";
+        pagamentoInfo = "💳 Cartão de Crédito - Link: https://link.mercadopago.com.br/flowmize";
       } else if (pagamento === "debito") {
-        pagamentoInfo = "Forma de pagamento: Cartão de Débito\nLink para Pagamento: https://link.mercadopago.com.br/flowmize";
+        pagamentoInfo = "💳 Cartão de Débito - Link: https://link.mercadopago.com.br/flowmize";
       }
       
-      let produtosTexto = "Produtos:\n";
+      let produtosTexto = "🛒 *Produtos do Pedido:*\n";
       cart.forEach(item => {
-        produtosTexto += `- ${item.name} - Preço: ${item.newPrice}\n`;
+        produtosTexto += `• ${item.name} - Preço: ${item.newPrice}\n`;
       });
       
       let total = 0;
@@ -335,20 +335,24 @@
         price = parseFloat(price) / 100;
         if (!isNaN(price)) total += price;
       });
-      produtosTexto += `\nTotal: R$ ${total.toFixed(2)}\n\n`;
+      produtosTexto += `\n💰 *Total:* R$ ${total.toFixed(2)}\n\n`;
       
-      let entregaTexto = "Dados de Entrega:\n";
-      entregaTexto += `Nome: ${nome}\n`;
-      entregaTexto += `Estado: ${estado}\n`;
-      entregaTexto += `Cidade: ${cidade}\n`;
-      entregaTexto += `Endereço: ${endereco}\n`;
-      if (complemento) entregaTexto += `Complemento: ${complemento}\n`;
-      if (ponto) entregaTexto += `Ponto de Referência: ${ponto}\n`;
-      entregaTexto += pagamentoInfo + "\n";
+      let entregaTexto = "*Dados de Entrega:*\n";
+      entregaTexto += `👤 Nome: ${nome}\n`;
+      entregaTexto += `📍 Estado: ${estado}\n`;
+      entregaTexto += `🏙️ Cidade: ${cidade}\n`;
+      entregaTexto += `📫 Endereço: ${endereco}\n`;
+      if (complemento) entregaTexto += `🏠 Complemento: ${complemento}\n`;
+      if (ponto) entregaTexto += `🔖 Ponto de Referência: ${ponto}\n`;
+      entregaTexto += `\n${pagamentoInfo}\n`;
       
-      let mensagem = "Olá, gostaria de finalizar a compra:\n\n" + produtosTexto + entregaTexto;
+      let mensagem = "Olá, tudo bem? 😃\n" +
+                     "Segue abaixo meu pedido:\n\n" +
+                     produtosTexto +
+                     entregaTexto +
+                     "\nAguardo sua confirmação! Obrigado! 🙏";
+      
       let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
-      
       window.open(url, "_blank");
     }
     
