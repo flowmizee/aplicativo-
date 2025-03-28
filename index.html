@@ -12,12 +12,12 @@
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow-x: hidden; /* Garante que conteúdos fora da tela não apareçam */
+      overflow-x: hidden;
     }
-    /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
+    /* Cabeçalho */
     .header {
       position: fixed;
-      top: 40px; /* Espaço para o banner */
+      top: 40px;
       left: 0;
       width: 100%;
       height: 60px;
@@ -26,14 +26,12 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       z-index: 1000;
     }
-    /* Menu no canto superior esquerdo */
     .header-left {
       position: absolute;
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
     }
-    /* Logo centralizada */
     .header-center {
       position: absolute;
       left: 50%;
@@ -43,7 +41,6 @@
     .header-center .logo {
       width: 70px;
     }
-    /* Ícones (lupa e carrinho) no canto superior direito */
     .header-right {
       position: absolute;
       right: 5px;
@@ -53,7 +50,6 @@
       align-items: center;
       gap: 15px;
     }
-    /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
     .menu-icon,
     .header-right img.icon {
       font-size: 28px;
@@ -64,7 +60,6 @@
       align-items: center;
       justify-content: center;
     }
-    /* Redimensiona o círculo da contagem do carrinho */
     .cart-count {
       background: red;
       color: #fff;
@@ -79,7 +74,7 @@
       min-width: 16px;
       text-align: center;
     }
-    /* Banner de Promoção (Texto Rolando) */
+    /* Banner de Promoção */
     .promo-banner {
       position: fixed;
       top: 0;
@@ -108,7 +103,7 @@
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
     }
-    /* Input de Pesquisa – posição fixa */
+    /* Input de Pesquisa */
     .search-container {
       position: fixed;
       top: 0;
@@ -121,7 +116,7 @@
     }
     .search-input {
       position: fixed;
-      top: -60px; /* Inicia oculto acima da viewport */
+      top: -60px;
       padding: 10px 15px;
       font-size: 18px;
       border: 2px solid #f8c91c;
@@ -138,7 +133,7 @@
     .search-input.active {
       opacity: 1;
       visibility: visible;
-      top: 120px; /* Fica um pouco abaixo */
+      top: 120px;
     }
     @media screen and (min-width: 768px) {
       .search-input { width: 400px; }
@@ -146,7 +141,7 @@
     @media screen and (min-width: 1024px) {
       .search-input { width: 500px; }
     }
-    /* Sidebar com Instagram e WhatsApp */
+    /* Sidebar */
     .sidebar {
       position: fixed;
       top: 0;
@@ -156,7 +151,6 @@
       background: #fff;
       padding: 90px 20px 20px;
       box-sizing: border-box;
-      /* Esconde totalmente com transform e opacidade */
       transform: translateX(-100%);
       opacity: 0;
       transition: transform 0.3s ease, opacity 0.3s ease;
@@ -311,55 +305,6 @@
     .icon-animate {
       animation: iconClick 0.2s ease;
     }
-    /* Estilos do Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background-color: #000;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid rgba(255,255,255,0.5);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 350px;
-      max-height: 80vh;
-      overflow-y: auto;
-      color: #fff;
-      position: relative;
-      text-align: center;
-      box-sizing: border-box;
-    }
-    .modal-content p.explanation { text-align: left; }
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .modal-buttons button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px 0;
-      border: none;
-      background: #fff;
-      color: #000;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .modal-buttons button:hover { background: #e6b900; }
   </style>
   <!-- Biblioteca PapaParse para ler CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -369,7 +314,7 @@
   <div class="promo-banner">
     <p>Parcele em até 5x sem juros | Frete grátis acima de R$ 300</p>
   </div>
-  <!-- Cabeçalho com três áreas posicionadas de forma absoluta -->
+  <!-- Cabeçalho -->
   <header class="header">
     <div class="header-left">
       <span class="menu-icon" onclick="animateIcon(this); toggleSidebar()">☰</span>
@@ -381,6 +326,7 @@
       <span onclick="animateIcon(this); toggleSearch()">
         <img class="icon" src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/FFFFFF/external-search-twitter-flatart-icons-outline-flatarticons.png" alt="search icon"/>
       </span>
+      <!-- Atualização: Ícone do carrinho agora redireciona para a página do carrinho -->
       <span id="cart-icon" onclick="animateIcon(this); goToCart()">
         <img class="icon" src="https://img.icons8.com/ios-filled/50/FFFFFF/shopping-cart.png" alt="shopping-cart"/>
         <span id="cart-count" class="cart-count"></span>
@@ -426,34 +372,13 @@
   <!-- Container dos Produtos -->
   <div id="products-container"></div>
   
-  <!-- Modal para Medir o Tamanho do Anel -->
-  <div id="measureModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeModal()">X</span>
-      <h2>Como medir o tamanho do seu anel</h2>
-      <p class="explanation">Siga estas instruções para medir o tamanho do seu dedo:</p>
-      <div id="modalMedia">
-        <img id="measureImage" src="medir.jpeg" alt="Como medir" style="width:100%; border-radius:10px;">
-        <video id="measureVideo" controls style="display:none; width:100%; max-height:250px; border-radius:10px;">
-          <source src="dedo.mp4" type="video/mp4">
-          Seu navegador não suporta o elemento de vídeo.
-        </video>
-      </div>
-      <div class="modal-buttons">
-        <button onclick="showVideo()">VEJA COMO MEDIR SEU DEDO</button>
-        <button onclick="continueToCart()">CONTINUAR PARA O CARRINHO</button>
-        <button onclick="closeModal()">CANCELAR</button>
-      </div>
-    </div>
-  </div>
-  
   <script>
-    // Normaliza o texto removendo acentos e convertendo para minúsculas
+    // Função para normalizar texto e remover acentos
     function normalizeText(text) {
       return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
     
-    // Converte termos para sua forma singular
+    // Converte termos para a forma singular
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -470,7 +395,7 @@
       return result;
     }
     
-    // Termos por categoria (em forma singular)
+    // Termos por categoria
     const categoryTerms = {
       "Anéis": ["anel"],
       "Pulseiras": ["pulseira"],
@@ -479,13 +404,11 @@
       "Pingentes": ["pingente"]
     };
     
-    // Recupera o carrinho ou inicializa um array vazio
+    // Recupera o carrinho do localStorage
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let allProducts = [];
-    let currentProduct = null;
-    let currentProductImage = null;
     
-    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
+    // Atualiza a contagem do carrinho
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -528,6 +451,7 @@
       setTimeout(() => element.classList.remove("icon-animate"), 200);
     }
     
+    // Animação do produto voando até o ícone do carrinho
     function flyToCart(imgElement) {
       const imgClone = imgElement.cloneNode(true);
       const imgRect = imgElement.getBoundingClientRect();
@@ -554,8 +478,9 @@
       }, 1010);
     }
     
+    // Adiciona o produto ao carrinho sem redirecionar
     function addToCart(product, button) {
-      if(button) {
+      if (button) {
         button.classList.add("button-animate");
         setTimeout(() => button.classList.remove("button-animate"), 200);
       }
@@ -570,19 +495,13 @@
       updateCartCount();
     }
     
-    function goToCart() {
-      window.location.href = "produtos.html";
-    }
-    
+    // Função para o botão "Comprar" (não redireciona)
     function handleBuy(product, button, productImg) {
-      if (singularize(normalizeText(product.Nome)).includes("anel")) {
-        showMeasureModal(product, productImg);
-      } else {
-        addToCart(product, button);
-        flyToCart(productImg);
-      }
+      addToCart(product, button);
+      flyToCart(productImg);
     }
     
+    // Renderiza os produtos na página
     function renderProducts(products) {
       const container = document.getElementById("products-container");
       container.innerHTML = "";
@@ -639,6 +558,7 @@
       renderProducts(filtered);
     }
     
+    // URL do CSV com os dados dos produtos
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhaZYu5u9AzBY2hQPymf2Tf6FNnWclXELvpuifdXsiZTFgYF1uPAVybfJUob8ydsfTXeqTVfJ7dyF9/pub?output=csv";
     Papa.parse(csvUrl, {
       download: true,
@@ -661,36 +581,10 @@
       }
     });
     
-    function showMeasureModal(product, productImg) {
-      currentProduct = product;
-      currentProductImage = productImg;
-      document.getElementById("measureImage").style.display = "block";
-      document.getElementById("measureVideo").style.display = "none";
-      document.getElementById("measureVideo").pause();
-      document.getElementById("measureModal").style.display = "block";
-    }
-    
-    function closeModal() {
-      document.getElementById("measureModal").style.display = "none";
-      currentProduct = null;
-    }
-    
-    function showVideo() {
-      document.getElementById("measureImage").style.display = "none";
-      document.getElementById("measureVideo").style.display = "block";
-      document.getElementById("measureVideo").play();
-    }
-    
-    function continueToCart() {
-      if(currentProduct) {
-        addToCart(currentProduct);
-        if (currentProductImage) {
-          flyToCart(currentProductImage);
-          currentProductImage = null;
-        }
-        closeModal();
-      }
+    // Função para redirecionar ao clicar no ícone do carrinho
+    function goToCart() {
+      window.location.href = "carrinho.html";
     }
   </script>
 </body>
-</html>
+  </html>
