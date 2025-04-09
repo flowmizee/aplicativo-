@@ -3,64 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Layout Estilo Foto - 1001 Imports</title>
-
-  <!-- Biblioteca PapaParse (se for necessário carregar CSV) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
+  <title>1001 Imports</title>
   <style>
-    /* RESET BÁSICO */
-    * {
+    /* Estilos Globais */
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #000;  /* Fundo preto conforme seu exemplo */
+      background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
       overflow-x: hidden;
     }
-
-    /* BANNER PROMO FIXO NO TOPO */
-    .promo-banner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #fff;
-      color: #000;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 18px;
-      font-weight: bold;
-      z-index: 1010;
-      overflow: hidden;
-      transition: opacity 0.3s ease;
-    }
-    .promo-banner.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .promo-banner p {
-      margin: 0;
-      white-space: nowrap;
-      animation: scroll-text 10s linear infinite;
-    }
-    @keyframes scroll-text {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* CABEÇALHO FIXO */
+    /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
     .header {
       position: fixed;
-      top: 40px; /* Inicialmente 40px abaixo do banner */
+      top: 40px;
       left: 0;
       width: 100%;
       height: 60px;
       background: #000;
+      box-sizing: border-box;
       border-bottom: 1px solid rgba(255,255,255,0.2);
       z-index: 1000;
     }
@@ -112,8 +74,36 @@
       min-width: 16px;
       text-align: center;
     }
-
-    /* INPUT DE PESQUISA */
+    /* Banner de Promoção (Texto Rolando) */
+    .promo-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      color: #000;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 1010;
+      overflow: hidden;
+      transition: opacity 0.3s ease;
+    }
+    .promo-banner.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .promo-banner p {
+      margin: 0;
+      white-space: nowrap;
+      animation: scroll-text 10s linear infinite;
+    }
+    @keyframes scroll-text {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    /* Input de Pesquisa */
     .search-container {
       position: fixed;
       top: 0;
@@ -143,20 +133,15 @@
     .search-input.active {
       opacity: 1;
       visibility: visible;
-      top: 120px; /* Aparece abaixo do cabeçalho */
+      top: 120px;
     }
     @media screen and (min-width: 768px) {
-      .search-input {
-        width: 400px;
-      }
+      .search-input { width: 400px; }
     }
     @media screen and (min-width: 1024px) {
-      .search-input {
-        width: 500px;
-      }
+      .search-input { width: 500px; }
     }
-
-    /* SIDEBAR LATERAL (MENU) */
+    /* Sidebar */
     .sidebar {
       position: fixed;
       top: 0;
@@ -183,11 +168,8 @@
       margin: 20px 0;
       padding: 10px 0;
     }
-    .sidebar a:hover {
-      background: #f0f0f0;
-    }
-
-    /* CONTAINER DO VÍDEO (OPCIONAL) */
+    .sidebar a:hover { background: #f0f0f0; }
+    /* Container do Vídeo */
     #video-container {
       max-width: 800px;
       margin: 170px auto 10px auto;
@@ -199,8 +181,7 @@
       display: block;
       border-radius: 8px;
     }
-
-    /* ÁREA DE FILTROS (OPCIONAL) */
+    /* Área de Filtros */
     #filter-container {
       display: flex;
       flex-direction: column;
@@ -220,7 +201,6 @@
       text-align: center;
       height: 40px;
       box-sizing: border-box;
-      cursor: pointer;
     }
     select.filter-input {
       -webkit-appearance: none;
@@ -232,11 +212,7 @@
       background-size: 10px 10px;
       padding-right: 30px;
     }
-    #order-by {
-      cursor: default;
-    }
-
-    /* QUANTIDADE DE PRODUTOS */
+    #order-by { cursor: default; }
     #product-count {
       display: block;
       text-align: center;
@@ -250,51 +226,41 @@
       font-weight: bold;
       margin: 10px auto;
     }
-
-    /* CONTAINER DOS PRODUTOS */
+    /* Container dos Produtos */
     #products-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       padding: 20px;
-      max-width: 1000px; /* Se quiser deixar mais largo, aumente aqui */
+      max-width: 800px;
       margin: 0 auto;
     }
-
-    /*******************************************************************
-      ESTILOS PRINCIPAIS DO CARD PARA FICAR PARECIDO COM O “PRINT”
-    ********************************************************************/
     .product-card {
-      background: #000;
+      background: transparent;
       margin: 10px;
       padding: 10px;
       border-radius: 8px;
-      width: 90%;          /* Largura reduzida para ficar tipo “coluna” */
-      max-width: 320px;    /* Tamanho máximo (igual celular) */
+      width: 300px;
       box-sizing: border-box;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.2);
-      position: relative;  /* Se quiser posicionar algum selo de desconto */
+      border: 1px solid transparent;
     }
-
-    /* CARROSSEL ou IMAGEM SIMPLES */
+    /* Estilos do Carrossel de Produto */
     .product-carousel {
       position: relative;
       overflow: hidden;
       border-radius: 8px;
-      outline: none;  /* Removendo o outline */
-      outline-offset: 0;
+      outline: 2px solid #fff;
+      outline-offset: 5px;
     }
     .carousel-track {
       display: flex;
       transition: transform 0.3s ease;
     }
     .carousel-track img {
-      width: 100%;   /* Foto ocupando todo o card */
+      width: 100%;
       display: block;
     }
-
-    /* SETAS DO CARROSSEL (CASO USE) */
     .arrow {
       position: absolute;
       top: 50%;
@@ -313,12 +279,9 @@
     .right-arrow {
       right: 10px;
     }
-
-    /* DESCRIÇÃO E PREÇOS */
     .product-description h2 {
       margin: 10px 0;
-      font-size: 1.3rem;
-      font-weight: bold;
+      font-size: 1.5rem;
     }
     .product-description p {
       margin: 5px 0;
@@ -329,39 +292,30 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
-      margin: 5px 0;
     }
     .prices .old-price {
       color: gray;
       text-decoration: line-through;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     .prices .new-price {
-      color: #02FF85; /* Verde para destaque */
-      font-size: 1.1rem;
-      font-weight: bold;
+      color: #02FF85;
+      font-size: 1rem;
     }
-
-    /* BOTÃO DE COMPRA */
     .buy-button {
       display: block;
       width: 100%;
-      border: none;
-      background: #02FF85;
+      border: 1px solid #000;
+      background: #fff;
       color: #000;
       padding: 10px 0;
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       cursor: pointer;
       margin-top: 10px;
       border-radius: 30px;
       font-weight: bold;
       text-transform: uppercase;
     }
-    .buy-button:hover {
-      background: #fff;
-    }
-
-    /* ANIMAÇÕES DE CLIQUE E VOO PARA O CARRINHO */
     @keyframes buttonClick {
       0% { transform: scale(1); }
       50% { transform: scale(0.9); }
@@ -378,8 +332,7 @@
     .icon-animate {
       animation: iconClick 0.2s ease;
     }
-
-    /* MODAL (MEDIR TAMANHO DO ANEL) - OPCIONAL */
+    /* Estilos do Modal */
     .modal {
       display: none;
       position: fixed;
@@ -406,11 +359,7 @@
       text-align: center;
       box-sizing: border-box;
     }
-    .modal-content p.explanation {
-      text-align: left;
-      line-height: 1.4;
-      margin-top: 10px;
-    }
+    .modal-content p.explanation { text-align: left; }
     .modal-close {
       position: absolute;
       top: 10px;
@@ -431,18 +380,16 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .modal-buttons button:hover {
-      background: #e6b900;
-    }
-
+    .modal-buttons button:hover { background: #e6b900; }
   </style>
+  <!-- Biblioteca PapaParse para ler CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
   <!-- Banner de Promoção -->
   <div class="promo-banner">
     <p>Parcele em até 5x sem juros | Frete grátis acima de R$ 300</p>
   </div>
-
   <!-- Cabeçalho -->
   <header class="header">
     <div class="header-left">
@@ -461,12 +408,10 @@
       </span>
     </div>
   </header>
-
   <!-- Input de Pesquisa -->
   <div class="search-container">
     <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar..." oninput="filterProducts()">
   </div>
-
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <a href="https://www.instagram.com/flowmize?igsh=MTkxYmhlN29rb2preA==" target="_blank">
@@ -476,16 +421,14 @@
       <img src="whatsapp.png" alt="WhatsApp" style="width:20px; vertical-align:middle; margin-right:8px;"> WhatsApp
     </a>
   </div>
-
-  <!-- Container do Vídeo (Opcional) -->
+  <!-- Container do Vídeo -->
   <div id="video-container">
     <video id="promo-video" loop muted autoplay playsinline>
       <source src="https://files.catbox.moe/ex69gu.mp4" type="video/mp4">
       Seu navegador não suporta o elemento de vídeo.
     </video>
   </div>
-
-  <!-- Área de Filtros (Opcional) -->
+  <!-- Área de Filtros -->
   <div id="filter-container">
     <input type="text" id="order-by" class="filter-input" value="Ordenar por" readonly>
     <select id="category" class="filter-input" onchange="filterProducts()">
@@ -497,22 +440,19 @@
       <option value="Pingentes">Pingentes</option>
     </select>
   </div>
-
   <!-- Quantidade de produtos -->
   <span id="product-count"></span>
   <!-- Título da Seção -->
   <h1 class="products-title">Todos os Produtos</h1>
   <!-- Container dos Produtos -->
   <div id="products-container"></div>
-
-  <!-- Modal para Medir o Tamanho do Anel (Opcional) -->
+  
+  <!-- Modal para Medir o Tamanho do Anel -->
   <div id="measureModal" class="modal">
     <div class="modal-content">
       <span class="modal-close" onclick="closeModal()">X</span>
       <h2>Como medir o tamanho do seu anel</h2>
-      <p class="explanation">
-        Siga estas instruções para medir o tamanho do seu dedo:
-      </p>
+      <p class="explanation">Siga estas instruções para medir o tamanho do seu dedo:</p>
       <div id="modalMedia">
         <img id="measureImage" src="medir.jpeg" alt="Como medir" style="width:100%; border-radius:10px;">
         <video id="measureVideo" controls style="display:none; width:100%; max-height:250px; border-radius:10px;">
@@ -527,34 +467,12 @@
       </div>
     </div>
   </div>
-
+  
   <script>
-    /******************************************************************
-      DECLARAÇÕES INICIAIS DE ARRAY DE PRODUTOS, CARRINHO, ETC.
-    ******************************************************************/
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let allProducts = [];    // Caso queira carregar via CSV
-    let currentProduct = null;
-    let currentProductImage = null;
-
-    const categoryTerms = {
-      "Anéis": ["anel"],
-      "Pulseiras": ["pulseira"],
-      "Correntes": ["corrente"],
-      "Brincos": ["brinco"],
-      "Pingentes": ["pingente"]
-    };
-
-    /******************************************************************
-      FUNÇÕES PARA NORMALIZAR, SINGULARIZAR, FILTRAR E EXIBIR PRODUTOS
-    ******************************************************************/
+    // Funções utilitárias de normalização e singularização
     function normalizeText(text) {
-      return text
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
-
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -570,7 +488,19 @@
       }
       return result;
     }
-
+    const categoryTerms = {
+      "Anéis": ["anel"],
+      "Pulseiras": ["pulseira"],
+      "Correntes": ["corrente"],
+      "Brincos": ["brinco"],
+      "Pingentes": ["pingente"]
+    };
+    
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let allProducts = [];
+    let currentProduct = null;
+    let currentProductImage = null;
+    
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -580,60 +510,37 @@
         countElem.style.visibility = "hidden";
       }
     }
-
     window.addEventListener("load", () => {
       cart = JSON.parse(localStorage.getItem("cart")) || [];
       updateCartCount();
-
-      /* 
-        Exemplo de produto único “fixo” (se você quiser testar sem CSV).
-        Se quiser carregar vários produtos, comente esse bloco e use CSV. 
-      */
-      allProducts = [
-        {
-          "Nome": "Brinco Argola \"ICE\" Cravejado Hype (P)",
-          "Preço Antigo": "R$ 149,90",
-          "Preço Novo": "R$ 49,90",
-          "Parcelas": "5x de R$ 9,98 sem juros",
-          "URL da Imagem 1": "https://cdn.shopify.com/s/files/1/0293/9277/products/earring1.jpg?v=1610047793",
-          "URL da Imagem 2": "https://cdn.shopify.com/s/files/1/0293/9277/products/earring2.jpg?v=1610047793",
-          "URL da Imagem 3": "https://cdn.shopify.com/s/files/1/0293/9277/products/earring3.jpg?v=1610047793",
-          "URL da Imagem 4": "https://cdn.shopify.com/s/files/1/0293/9277/products/earring4.jpg?v=1610047793"
-        }
-      ];
-      filterProducts();
     });
-
     window.addEventListener("pageshow", () => {
       cart = JSON.parse(localStorage.getItem("cart")) || [];
       updateCartCount();
     });
-
+    
     function toggleSearch() {
       const searchInput = document.getElementById("searchInput");
       searchInput.classList.toggle("active");
       const video = document.getElementById("promo-video");
       if (searchInput.classList.contains("active")) {
-        if(video) video.pause();
+        video.pause();
         searchInput.focus();
       } else {
         searchInput.value = "";
         filterProducts();
-        if(video) video.play();
+        video.play();
       }
     }
-
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("open");
     }
-
     function animateIcon(element) {
       element.classList.add("icon-animate");
       setTimeout(() => element.classList.remove("icon-animate"), 200);
     }
-
+    
     function flyToCart(imgElement) {
-      if(!imgElement) return;
       const imgClone = imgElement.cloneNode(true);
       const imgRect = imgElement.getBoundingClientRect();
       imgClone.style.position = 'fixed';
@@ -643,24 +550,21 @@
       imgClone.style.transition = 'all 1s ease-in-out';
       imgClone.style.zIndex = 1500;
       document.body.appendChild(imgClone);
-
       const cartIcon = document.getElementById('cart-icon');
       const cartRect = cartIcon.getBoundingClientRect();
-
       setTimeout(() => {
         imgClone.style.top = cartRect.top + 'px';
         imgClone.style.left = cartRect.left + 'px';
         imgClone.style.width = '20px';
         imgClone.style.opacity = '0.5';
       }, 10);
-
       setTimeout(() => {
         document.body.removeChild(imgClone);
       }, 1010);
     }
-
+    
     function addToCart(product, button) {
-      if (button) {
+      if(button) {
         button.classList.add("button-animate");
         setTimeout(() => button.classList.remove("button-animate"), 200);
       }
@@ -669,19 +573,17 @@
         oldPrice: product["Preço Antigo"],
         newPrice: product["Preço Novo"],
         parcelas: product.Parcelas,
-        image: product["URL da Imagem 1"] // usa a 1ª imagem
+        image: product["URL da Imagem 1"] // Pode-se usar a imagem principal
       });
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
     }
-
+    
     function goToCart() {
-      // Exemplo: redirecionar para página do carrinho
-      alert("Ir para o carrinho (implementar)!");
+      window.location.href = "produtos.html";
     }
-
+    
     function handleBuy(product, button, productImg) {
-      // Exemplo: se for anel, mostra modal de medir tamanho
       if (singularize(normalizeText(product.Nome)).includes("anel")) {
         showMeasureModal(product, productImg);
       } else {
@@ -689,16 +591,14 @@
         flyToCart(productImg);
       }
     }
-
+    
     function renderProducts(products) {
       const container = document.getElementById("products-container");
       container.innerHTML = "";
-
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
-
-        // Carrossel de até 4 imagens
+        // Criação do carrossel com as 4 imagens
         let carouselHTML = `
           <div class="product-carousel">
             <div class="carousel-track">
@@ -709,9 +609,8 @@
             </div>
             <span class="arrow left-arrow">&#10094;</span>
             <span class="arrow right-arrow">&#10095;</span>
-          </div>
-        `;
-
+          </div>`;
+          
         let productHTML = `
           ${carouselHTML}
           <div class="product-description">
@@ -722,58 +621,49 @@
             </div>
             <p>${product.Parcelas}</p>
             <button class="buy-button">Comprar</button>
-          </div>
-        `;
+          </div>`;
         card.innerHTML = productHTML;
         container.appendChild(card);
-
-        // Inicializa o carrossel
+        
+        // Inicializa o carrossel para este card
         initializeCarousel(card);
-
-        // Botão de compra
+        
+        // Para o botão de compra, pega a imagem visível (primeira imagem do track)
         const buyButton = card.querySelector(".buy-button");
         buyButton.addEventListener("click", () => {
           const productImg = card.querySelector('.carousel-track img');
           handleBuy(product, buyButton, productImg);
         });
       });
-
       document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
     }
-
-    // Função para inicializar cada carrossel
+    
+    // Função para inicializar o carrossel em cada card
     function initializeCarousel(card) {
       const carousel = card.querySelector('.product-carousel');
       if (!carousel) return;
-
       const track = carousel.querySelector('.carousel-track');
       const slides = track.children;
       let index = 0;
-
       const updateCarousel = () => {
         track.style.transform = `translateX(-${index * 100}%)`;
       };
-
       const leftArrow = carousel.querySelector('.left-arrow');
       const rightArrow = carousel.querySelector('.right-arrow');
-
       leftArrow.addEventListener('click', function() {
-        index = (index <= 0) ? slides.length - 1 : index - 1;
+        index = index <= 0 ? slides.length - 1 : index - 1;
         updateCarousel();
       });
-
       rightArrow.addEventListener('click', function() {
-        index = (index >= slides.length - 1) ? 0 : index + 1;
+        index = index >= slides.length - 1 ? 0 : index + 1;
         updateCarousel();
       });
     }
-
+    
     function filterProducts() {
-      let filtered = allProducts.slice(); // Cópia
-
+      let filtered = allProducts.slice();
       const category = document.getElementById("category").value;
       const titleElement = document.querySelector(".products-title");
-
       if (category === "all") {
         titleElement.textContent = "Todos os Produtos";
       } else {
@@ -784,7 +674,6 @@
           return terms.some(term => normalizedProductName.includes(term));
         });
       }
-
       const searchInputRaw = document.getElementById("searchInput").value.trim();
       if (searchInputRaw !== "") {
         const normalizedSearch = singularize(normalizeText(searchInputRaw));
@@ -793,12 +682,11 @@
           return normalizedProductName.includes(normalizedSearch);
         });
       }
-
       renderProducts(filtered);
     }
-
-    /* Se quiser carregar CSV real do Google Sheets, descomente:
-    const csvUrl = "https://docs.google.com/spreadsheets/d/EXEMPLO/pub?output=csv";
+    
+    // Carrega os produtos da planilha CSV
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhaZYu5u9AzBY2hQPymf2Tf6FNnWclXELvpuifdXsiZTFgYF1uPAVybfJUob8ydsfTXeqTVfJ7dyF9/pub?output=csv";
     Papa.parse(csvUrl, {
       download: true,
       header: true,
@@ -807,11 +695,7 @@
         filterProducts();
       }
     });
-    */
-
-    /******************************************************************
-      SCROLL PARA ESCONDER O BANNER PROMO QUANDO DER SCROLL
-    ******************************************************************/
+    
     window.addEventListener("scroll", function() {
       const banner = document.querySelector(".promo-banner");
       const header = document.querySelector(".header");
@@ -823,10 +707,7 @@
         header.style.top = "40px";
       }
     });
-
-    /******************************************************************
-      MODAL DE MEDIR TAMANHO (EXEMPLO PARA ANÉIS)
-    ******************************************************************/
+    
     function showMeasureModal(product, productImg) {
       currentProduct = product;
       currentProductImage = productImg;
@@ -835,18 +716,18 @@
       document.getElementById("measureVideo").pause();
       document.getElementById("measureModal").style.display = "block";
     }
-
+    
     function closeModal() {
       document.getElementById("measureModal").style.display = "none";
       currentProduct = null;
     }
-
+    
     function showVideo() {
       document.getElementById("measureImage").style.display = "none";
       document.getElementById("measureVideo").style.display = "block";
       document.getElementById("measureVideo").play();
     }
-
+    
     function continueToCart() {
       if (currentProduct) {
         addToCart(currentProduct);
@@ -858,6 +739,5 @@
       }
     }
   </script>
-
 </body>
 </html>
