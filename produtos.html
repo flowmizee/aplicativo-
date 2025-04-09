@@ -366,19 +366,30 @@
         if (!isNaN(price)) total += price;
       });
       
-      // Constrói a mensagem para o WhatsApp (o telefone do cliente não é incluído na mensagem)
+      // Constrói a mensagem para o WhatsApp com os campos em negrito
       let mensagem = "Olá, tudo bem? 😃\n" +
                      "Segue abaixo meu pedido:\n\n" +
-                     "🛒 Produtos: " + produtosStr + "\n" +
+                     "🛒 *Produtos:* " + produtosStr + "\n" +
                      "📦 Quantidade: " + quantidadeTotal + "\n" +
                      "💰 Total: R$ " + total.toFixed(2) + "\n\n" +
+                     "📋 *Dados do Cliente:*\n" +
                      "👤 Nome: " + nome + "\n" +
                      "📍 Estado: " + estado + "\n" +
                      "🏙️ Cidade: " + cidade + "\n" +
                      "📫 Endereço: " + endereco + "\n";
       if (complemento) mensagem += "🏠 Complemento: " + complemento + "\n";
       if (ponto) mensagem += "🔖 Ponto de Referência: " + ponto + "\n";
-      mensagem += "\nForma de Pagamento: " + pagamento;
+      
+      mensagem += "\n";
+      
+      // Adiciona informações específicas de pagamento
+      if (pagamento === "pix") {
+        mensagem += "💵 *Forma de Pagamento:* pix\nChave Pix: renimarfilho000@gmail.com";
+      } else if (pagamento === "credito") {
+        mensagem += "💵 *Forma de Pagamento:* Cartão de Crédito\nLink para pagamento: https://link.mercadopago.com.br/flowmize";
+      } else if (pagamento === "debito") {
+        mensagem += "💵 *Forma de Pagamento:* Cartão de Débito\nLink para pagamento: https://link.mercadopago.com.br/flowmize";
+      }
       
       // Dados para registro na planilha:
       // Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data/Hora
