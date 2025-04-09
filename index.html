@@ -381,6 +381,20 @@
       font-weight: bold;
     }
     .modal-buttons button:hover { background: #e6b900; }
+
+    /* Media Query para dispositivos móveis */
+    @media screen and (max-width: 768px) {
+      .product-card {
+        width: 95%; /* Ajusta para quase toda a largura do celular */
+        margin: 10px auto;
+      }
+      .buy-button {
+        width: 80%; /* Botão um pouco mais fino */
+        margin: 10px auto;
+        font-size: 1.2rem;
+        padding: 8px 0;
+      }
+    }
   </style>
   <!-- Biblioteca PapaParse para ler CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
