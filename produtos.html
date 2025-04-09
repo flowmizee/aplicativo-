@@ -152,6 +152,10 @@
       <label for="nome">Nome:</label>
       <input type="text" id="nome" name="nome" required>
       
+      <!-- Campo para número do WhatsApp -->
+      <label for="telefone">Número do WhatsApp:</label>
+      <input type="text" id="telefone" name="telefone" required placeholder="(xx) 9xxxx-xxxx">
+      
       <label for="estado">Estado:</label>
       <input type="text" id="estado" name="estado" required>
       
@@ -300,9 +304,26 @@
       }, false);
     }
     
-    // Finaliza a compra e envia os dados via WhatsApp com mensagem personalizada e emojis
+    // Função que envia os dados do pedido para o Google Apps Script
+    function registerOrder(orderData) {
+      // URL do Web App do Google Apps Script fornecida:
+      const scriptURL = 'https://script.google.com/macros/s/AKfycby9zp3gzId6S3As26HPMlPYV8TWttfdSW4vwsvZdw1QSxbgLy0iD2KRRsrpm-Tq9WdQkw/exec';
+      
+      fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors', // modo silencioso para não interferir na experiência do usuário
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      })
+      .catch(error => console.error('Erro ao registrar pedido:', error));
+    }
+    
+    // Finaliza a compra: coleta os dados, envia para o Apps Script e redireciona para o WhatsApp
     function finalizePurchase() {
       const nome = document.getElementById("nome").value.trim();
+      const telefone = document.getElementById("telefone").value.trim();
       const estado = document.getElementById("estado").value.trim();
       const cidade = document.getElementById("cidade").value.trim();
       const endereco = document.getElementById("endereco").value.trim();
@@ -310,7 +331,7 @@
       const ponto = document.getElementById("ponto").value.trim();
       const pagamento = document.getElementById("pagamento").value;
       
-      if (!nome || !estado || !cidade || !endereco || !pagamento) {
+      if (!nome || !telefone || !estado || !cidade || !endereco || !pagamento) {
         alert("Por favor, preencha os campos obrigatórios do formulário.");
         return;
       }
@@ -324,21 +345,30 @@
         pagamentoInfo = "💳 Cartão de Débito - Link: https://link.mercadopago.com.br/flowmize";
       }
       
-      let produtosTexto = "🛒 *Produtos do Pedido:*\n";
-      cart.forEach(item => {
-        produtosTexto += `• ${item.name} - Preço: ${item.newPrice}\n`;
-      });
+      // Monta os dados dos produtos: cria um array com os nomes dos produtos
+      let produtosArray = cart.map(item => item.name);
+      let produtosStr = produtosArray.join(", ");
+      // Quantidade é o total de itens do carrinho
+      let quantidadeTotal = cart.length;
       
+      // Calcula o total do pedido
       let total = 0;
       cart.forEach(item => {
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
         if (!isNaN(price)) total += price;
       });
+      
+      // Constrói a mensagem para o WhatsApp
+      let produtosTexto = "🛒 *Produtos do Pedido:*\n";
+      produtosArray.forEach(prod => {
+        produtosTexto += `• ${prod}\n`;
+      });
       produtosTexto += `\n💰 *Total:* R$ ${total.toFixed(2)}\n\n`;
       
       let entregaTexto = "*Dados de Entrega:*\n";
       entregaTexto += `👤 Nome: ${nome}\n`;
+      entregaTexto += `📞 Telefone: ${telefone}\n`;
       entregaTexto += `📍 Estado: ${estado}\n`;
       entregaTexto += `🏙️ Cidade: ${cidade}\n`;
       entregaTexto += `📫 Endereço: ${endereco}\n`;
@@ -352,6 +382,21 @@
                      entregaTexto +
                      "\nAguardo sua confirmação! Obrigado! 🙏";
       
+      // Dados que serão enviados para o Apps Script – organizados conforme sua planilha:
+      // Colunas: Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data Hora
+      const orderData = {
+        produtos: produtosArray,      // array de nomes dos produtos
+        // Para registro na planilha, vamos enviar a string com produtos
+        total: total.toFixed(2),        // preço total do pedido
+        nome: nome,
+        telefone: telefone,
+        dataHora: new Date().toLocaleString()
+      };
+      
+      // Chama a função que registra o pedido na planilha (silenciosamente)
+      registerOrder(orderData);
+      
+      // Redireciona para o WhatsApp com o pedido formatado
       let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
