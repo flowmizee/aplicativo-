@@ -184,9 +184,8 @@
   </div>
   
   <script>
-    // Recupera o carrinho salvo no localStorage (ou use um array de teste)
+    // Recupera o carrinho salvo no localStorage (ou usa array de teste)
     let cart = JSON.parse(localStorage.getItem("cart")) || [
-      // Exemplo: caso o carrinho esteja vazio, é possível testar com dados simulados
       { name: "Hambúrguer", newPrice: "R$25,00" },
       { name: "Batata Frita", newPrice: "R$12,00" }
     ];
@@ -230,7 +229,7 @@
       document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Função para remover item com gesto de swipe (opcional)
+    // Função para remoção do item com gesto de swipe
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
@@ -308,22 +307,35 @@
       }, false);
     }
     
-    // Envia os dados do pedido para o Google Apps Script
-    function registerOrder(orderData) {
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbwqJueN4Q6_isCGj48P6WSfFKBSCxv6FLSGJ3Ukzg1XmyOO3sXNHOVM3KWshsubd5fhBQ/exec';
-      
-      fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderData)
-      })
-      .catch(error => console.error('Erro ao registrar pedido:', error));
+    // Função para validar o número de WhatsApp
+    function validaTelefone(telefone) {
+      // Remove os caracteres que não sejam dígitos
+      const digitos = telefone.replace(/\D/g, '');
+      if (digitos.length !== 11) return false;
+      // Verifica se o terceiro dígito (após o DDD) é o 9
+      if (digitos.charAt(2) !== '9') return false;
+      return true;
     }
     
-    // Finaliza a compra: coleta os dados, envia para o Apps Script e redireciona para o WhatsApp
+    // Registra o pedido na planilha via GET (Apps Script)
+    function registerOrder(orderData) {
+      // URL do seu Apps Script (não modifique se já estiver funcionando)
+      const scriptURL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
+      
+      // Cria a query string com os dados (Produtos | Quantidade | Total | Nome | Telefone | Data/Hora)
+      const queryString = "?produtos=" + encodeURIComponent(orderData.produtos) +
+                          "&quantidade=" + encodeURIComponent(orderData.quantidade) +
+                          "&total=" + encodeURIComponent(orderData.total) +
+                          "&nome=" + encodeURIComponent(orderData.nome) +
+                          "&telefone=" + encodeURIComponent(orderData.telefone) +
+                          "&dataHora=" + encodeURIComponent(orderData.dataHora);
+      
+      fetch(scriptURL + queryString)
+        .then(response => console.log('Pedido registrado na planilha.'))
+        .catch(error => console.error('Erro ao registrar pedido:', error));
+    }
+    
+    // Finaliza a compra: coleta os dados, valida, registra na planilha e redireciona para o WhatsApp
     function finalizePurchase() {
       const nome = document.getElementById("nome").value.trim();
       const telefone = document.getElementById("telefone").value.trim();
@@ -339,7 +351,13 @@
         return;
       }
       
-      // Monta a string com os nomes dos produtos e calcula quantidade e total
+      // Validação do telefone (11 dígitos e o terceiro dígito deve ser 9)
+      if (!validaTelefone(telefone)) {
+        alert("Telefone inválido! Utilize o formato (xx) 9xxxx-xxxx.");
+        return;
+      }
+      
+      // Monta a string com os nomes dos produtos, quantidade e total
       const produtosArray = cart.map(item => item.name);
       const produtosStr = produtosArray.join(", ");
       const quantidadeTotal = cart.length;
@@ -348,19 +366,16 @@
       cart.forEach(item => {
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
-        if (!isNaN(price)) {
-          total += price;
-        }
+        if (!isNaN(price)) total += price;
       });
       
-      // Constrói a mensagem para o WhatsApp (opcional, personalize conforme desejar)
+      // Constrói a mensagem para o WhatsApp (o telefone não é incluído na mensagem)
       let mensagem = "Olá, tudo bem? 😃\n" +
                      "Segue abaixo meu pedido:\n\n" +
                      "🛒 Produtos: " + produtosStr + "\n" +
                      "📦 Quantidade: " + quantidadeTotal + "\n" +
                      "💰 Total: R$ " + total.toFixed(2) + "\n\n" +
                      "👤 Nome: " + nome + "\n" +
-                     "📞 Telefone: " + telefone + "\n" +
                      "📍 Estado: " + estado + "\n" +
                      "🏙️ Cidade: " + cidade + "\n" +
                      "📫 Endereço: " + endereco + "\n";
@@ -368,7 +383,7 @@
       if (ponto) mensagem += "🔖 Ponto de Referência: " + ponto + "\n";
       mensagem += "\nForma de Pagamento: " + pagamento;
       
-      // Dados para registro na planilha (organizados conforme: Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data Hora)
+      // Dados para registro na planilha (ordem: Produtos | Quantidade | Total | Nome | Telefone | Data/Hora)
       const orderData = {
         produtos: produtosStr,
         quantidade: quantidadeTotal,
@@ -378,10 +393,11 @@
         dataHora: new Date().toLocaleString()
       };
       
-      // Registra o pedido na planilha de maneira silenciosa
+      // Registra o pedido na planilha
       registerOrder(orderData);
       
       // Redireciona para o WhatsApp com a mensagem formatada
+      // Atualize o número abaixo, se necessário, para o destino do pedido
       let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
