@@ -184,13 +184,13 @@
   </div>
   
   <script>
-    // Recupera o carrinho salvo no localStorage (ou usa array de teste)
+    // Recupera o carrinho salvo no localStorage (ou usa um array de teste)
     let cart = JSON.parse(localStorage.getItem("cart")) || [
       { name: "Hambúrguer", newPrice: "R$25,00" },
       { name: "Batata Frita", newPrice: "R$12,00" }
     ];
     
-    // Renderiza os itens do carrinho e atualiza a quantidade
+    // Renderiza os itens do carrinho e atualiza a quantidade e o total
     function renderCart() {
       const cartItemsContainer = document.getElementById("cart-items");
       cartItemsContainer.innerHTML = "";
@@ -204,12 +204,10 @@
       
       let total = 0;
       cart.forEach((item, index) => {
-        // Remove os caracteres não numéricos para converter o preço
+        // Remove os caracteres não numéricos e converte para valor numérico
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
-        if (!isNaN(price)) {
-          total += price;
-        }
+        if (!isNaN(price)) total += price;
         
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("cart-item");
@@ -229,7 +227,7 @@
       document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Função para remoção do item com gesto de swipe
+    // Permite a remoção do item com gesto de swipe
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
@@ -309,25 +307,24 @@
     
     // Função para validar o número de WhatsApp
     function validaTelefone(telefone) {
-      // Remove os caracteres que não sejam dígitos
       const digitos = telefone.replace(/\D/g, '');
       if (digitos.length !== 11) return false;
-      // Verifica se o terceiro dígito (após o DDD) é o 9
       if (digitos.charAt(2) !== '9') return false;
       return true;
     }
     
-    // Registra o pedido na planilha via GET (Apps Script)
+    // Registra o pedido na planilha via Apps Script (GET)
     function registerOrder(orderData) {
-      // URL do seu Apps Script (não modifique se já estiver funcionando)
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbztdjBeaYwwNlnnr5S5iONFLq35e6_79GYSJ6_CfnGztAVs65KlSNzb1aOCkY8vEecZFA';
+      // URL do Web App do Apps Script – substitua "SEU_SCRIPT_ID" pelo seu ID
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwmxDeyTjzDqVjpLoyumutUpBASjZ-UHoBfJCwYImAaXMuAD7nSk0uZIvsi_RXk_pPgnA/exec';
       
-      // Cria a query string com os dados (Produtos | Quantidade | Total | Nome | Telefone | Data/Hora)
+      // Cria a query string com os dados
+      // Note: use o parâmetro "precoTotal" para o valor total, conforme seu Apps Script espera
       const queryString = "?produtos=" + encodeURIComponent(orderData.produtos) +
                           "&quantidade=" + encodeURIComponent(orderData.quantidade) +
-                          "&total=" + encodeURIComponent(orderData.total) +
+                          "&precoTotal=" + encodeURIComponent(orderData.total) +
                           "&nome=" + encodeURIComponent(orderData.nome) +
-                          "&telefone=" + encodeURIComponent(orderData.telefone) +
+                          "&numero=" + encodeURIComponent(orderData.telefone) +
                           "&dataHora=" + encodeURIComponent(orderData.dataHora);
       
       fetch(scriptURL + queryString)
@@ -335,7 +332,7 @@
         .catch(error => console.error('Erro ao registrar pedido:', error));
     }
     
-    // Finaliza a compra: coleta os dados, valida, registra na planilha e redireciona para o WhatsApp
+    // Finaliza a compra: coleta os dados, valida o telefone, registra o pedido na planilha e redireciona para o WhatsApp
     function finalizePurchase() {
       const nome = document.getElementById("nome").value.trim();
       const telefone = document.getElementById("telefone").value.trim();
@@ -351,13 +348,13 @@
         return;
       }
       
-      // Validação do telefone (11 dígitos e o terceiro dígito deve ser 9)
+      // Validação do telefone (formato: 11 dígitos, com o terceiro dígito sendo 9)
       if (!validaTelefone(telefone)) {
         alert("Telefone inválido! Utilize o formato (xx) 9xxxx-xxxx.");
         return;
       }
       
-      // Monta a string com os nomes dos produtos, quantidade e total
+      // Monta a string com os nomes dos produtos, quantidade e preço total
       const produtosArray = cart.map(item => item.name);
       const produtosStr = produtosArray.join(", ");
       const quantidadeTotal = cart.length;
@@ -369,7 +366,7 @@
         if (!isNaN(price)) total += price;
       });
       
-      // Constrói a mensagem para o WhatsApp (o telefone não é incluído na mensagem)
+      // Constrói a mensagem para o WhatsApp (o telefone do cliente não é incluído na mensagem)
       let mensagem = "Olá, tudo bem? 😃\n" +
                      "Segue abaixo meu pedido:\n\n" +
                      "🛒 Produtos: " + produtosStr + "\n" +
@@ -383,7 +380,8 @@
       if (ponto) mensagem += "🔖 Ponto de Referência: " + ponto + "\n";
       mensagem += "\nForma de Pagamento: " + pagamento;
       
-      // Dados para registro na planilha (ordem: Produtos | Quantidade | Total | Nome | Telefone | Data/Hora)
+      // Dados para registro na planilha:
+      // Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data/Hora
       const orderData = {
         produtos: produtosStr,
         quantidade: quantidadeTotal,
@@ -393,11 +391,10 @@
         dataHora: new Date().toLocaleString()
       };
       
-      // Registra o pedido na planilha
+      // Registra o pedido na planilha via GET
       registerOrder(orderData);
       
-      // Redireciona para o WhatsApp com a mensagem formatada
-      // Atualize o número abaixo, se necessário, para o destino do pedido
+      // Redireciona para o WhatsApp com a mensagem formatada (atualize o número se necessário)
       let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
