@@ -142,17 +142,17 @@
     
     <!-- Botão que exibe o formulário -->
     <button class="checkout-btn" onclick="showForm()">Finalizar Compra</button>
-    <!-- Esse link apenas navega de volta para a página de produtos -->
+    <!-- Link para voltar à página de produtos -->
     <a href="index.html" class="back-link">Voltar para Produtos</a>
   </div>
   
-  <!-- Container do formulário de entrega, inicialmente oculto -->
+  <!-- Container do formulário de entrega (desliza de baixo para cima) -->
   <div id="form-container">
     <form id="delivery-form">
       <label for="nome">Nome:</label>
       <input type="text" id="nome" name="nome" required>
       
-      <!-- Campo para número do WhatsApp -->
+      <!-- Campo para o número do WhatsApp -->
       <label for="telefone">Número do WhatsApp:</label>
       <input type="text" id="telefone" name="telefone" required placeholder="(xx) 9xxxx-xxxx">
       
@@ -184,10 +184,14 @@
   </div>
   
   <script>
-    // Recupera o carrinho salvo no localStorage
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    // Recupera o carrinho salvo no localStorage (ou use um array de teste)
+    let cart = JSON.parse(localStorage.getItem("cart")) || [
+      // Exemplo: caso o carrinho esteja vazio, é possível testar com dados simulados
+      { name: "Hambúrguer", newPrice: "R$25,00" },
+      { name: "Batata Frita", newPrice: "R$12,00" }
+    ];
     
-    // Renderiza os itens do carrinho e atualiza a quantidade exibida
+    // Renderiza os itens do carrinho e atualiza a quantidade
     function renderCart() {
       const cartItemsContainer = document.getElementById("cart-items");
       cartItemsContainer.innerHTML = "";
@@ -201,6 +205,7 @@
       
       let total = 0;
       cart.forEach((item, index) => {
+        // Remove os caracteres não numéricos para converter o preço
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
         if (!isNaN(price)) {
@@ -211,11 +216,10 @@
         itemDiv.classList.add("cart-item");
         itemDiv.dataset.index = index;
         itemDiv.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
+          <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}">
           <div class="details">
             <h2>${item.name}</h2>
             <p>Preço: R$ ${price.toFixed(2)}</p>
-            <p>${item.parcelas ? item.parcelas : ""}</p>
           </div>
         `;
         cartItemsContainer.appendChild(itemDiv);
@@ -226,11 +230,11 @@
       document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Detecta o gesto de deslizar para a esquerda e remove o item
+    // Função para remover item com gesto de swipe (opcional)
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
-      const threshold = 100; // distância mínima para acionar o delete
+      const threshold = 100;
       
       element.addEventListener('touchstart', function(e) {
         startX = e.touches[0].clientX;
@@ -240,7 +244,7 @@
       element.addEventListener('touchmove', function(e) {
         currentX = e.touches[0].clientX;
         let deltaX = currentX - startX;
-        if (deltaX < 0) { // somente para deslize à esquerda
+        if (deltaX < 0) {
           element.style.transform = `translateX(${deltaX}px)`;
         }
       }, false);
@@ -268,12 +272,12 @@
       document.getElementById("form-container").classList.add("show");
     }
     
-    // Anexa eventos de swipe para fechar o formulário deslizando para baixo
+    // Permite fechar o formulário deslizando para baixo
     function attachFormSwipe() {
       const formContainer = document.getElementById("form-container");
       let startY = 0;
       let currentY = 0;
-      const threshold = 100; // distância mínima para acionar o fechamento
+      const threshold = 100;
       
       formContainer.addEventListener('touchstart', function(e) {
         startY = e.touches[0].clientY;
@@ -283,7 +287,7 @@
       formContainer.addEventListener('touchmove', function(e) {
         currentY = e.touches[0].clientY;
         let deltaY = currentY - startY;
-        if (deltaY > 0) { // apenas para deslizar para baixo
+        if (deltaY > 0) {
           formContainer.style.transform = `translateY(${deltaY}px)`;
         }
       }, false);
@@ -304,14 +308,13 @@
       }, false);
     }
     
-    // Função que envia os dados do pedido para o Google Apps Script
+    // Envia os dados do pedido para o Google Apps Script
     function registerOrder(orderData) {
-      // URL do Web App do Google Apps Script fornecida:
-      const scriptURL = 'https://script.google.com/macros/s/AKfycby9zp3gzId6S3As26HPMlPYV8TWttfdSW4vwsvZdw1QSxbgLy0iD2KRRsrpm-Tq9WdQkw/exec';
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwqJueN4Q6_isCGj48P6WSfFKBSCxv6FLSGJ3Ukzg1XmyOO3sXNHOVM3KWshsubd5fhBQ/exec';
       
       fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors', // modo silencioso para não interferir na experiência do usuário
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -336,67 +339,49 @@
         return;
       }
       
-      let pagamentoInfo = "";
-      if (pagamento === "pix") {
-        pagamentoInfo = "💸 Pix - Chave: 98981420070";
-      } else if (pagamento === "credito") {
-        pagamentoInfo = "💳 Cartão de Crédito - Link: https://link.mercadopago.com.br/flowmize";
-      } else if (pagamento === "debito") {
-        pagamentoInfo = "💳 Cartão de Débito - Link: https://link.mercadopago.com.br/flowmize";
-      }
+      // Monta a string com os nomes dos produtos e calcula quantidade e total
+      const produtosArray = cart.map(item => item.name);
+      const produtosStr = produtosArray.join(", ");
+      const quantidadeTotal = cart.length;
       
-      // Monta os dados dos produtos: cria um array com os nomes dos produtos
-      let produtosArray = cart.map(item => item.name);
-      let produtosStr = produtosArray.join(", ");
-      // Quantidade é o total de itens do carrinho
-      let quantidadeTotal = cart.length;
-      
-      // Calcula o total do pedido
       let total = 0;
       cart.forEach(item => {
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
-        if (!isNaN(price)) total += price;
+        if (!isNaN(price)) {
+          total += price;
+        }
       });
       
-      // Constrói a mensagem para o WhatsApp
-      let produtosTexto = "🛒 *Produtos do Pedido:*\n";
-      produtosArray.forEach(prod => {
-        produtosTexto += `• ${prod}\n`;
-      });
-      produtosTexto += `\n💰 *Total:* R$ ${total.toFixed(2)}\n\n`;
-      
-      let entregaTexto = "*Dados de Entrega:*\n";
-      entregaTexto += `👤 Nome: ${nome}\n`;
-      entregaTexto += `📞 Telefone: ${telefone}\n`;
-      entregaTexto += `📍 Estado: ${estado}\n`;
-      entregaTexto += `🏙️ Cidade: ${cidade}\n`;
-      entregaTexto += `📫 Endereço: ${endereco}\n`;
-      if (complemento) entregaTexto += `🏠 Complemento: ${complemento}\n`;
-      if (ponto) entregaTexto += `🔖 Ponto de Referência: ${ponto}\n`;
-      entregaTexto += `\n${pagamentoInfo}\n`;
-      
+      // Constrói a mensagem para o WhatsApp (opcional, personalize conforme desejar)
       let mensagem = "Olá, tudo bem? 😃\n" +
                      "Segue abaixo meu pedido:\n\n" +
-                     produtosTexto +
-                     entregaTexto +
-                     "\nAguardo sua confirmação! Obrigado! 🙏";
+                     "🛒 Produtos: " + produtosStr + "\n" +
+                     "📦 Quantidade: " + quantidadeTotal + "\n" +
+                     "💰 Total: R$ " + total.toFixed(2) + "\n\n" +
+                     "👤 Nome: " + nome + "\n" +
+                     "📞 Telefone: " + telefone + "\n" +
+                     "📍 Estado: " + estado + "\n" +
+                     "🏙️ Cidade: " + cidade + "\n" +
+                     "📫 Endereço: " + endereco + "\n";
+      if (complemento) mensagem += "🏠 Complemento: " + complemento + "\n";
+      if (ponto) mensagem += "🔖 Ponto de Referência: " + ponto + "\n";
+      mensagem += "\nForma de Pagamento: " + pagamento;
       
-      // Dados que serão enviados para o Apps Script – organizados conforme sua planilha:
-      // Colunas: Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data Hora
+      // Dados para registro na planilha (organizados conforme: Produtos | Quantidade | Preço Total | Nome do Cliente | Número do Cliente | Data Hora)
       const orderData = {
-        produtos: produtosArray,      // array de nomes dos produtos
-        // Para registro na planilha, vamos enviar a string com produtos
-        total: total.toFixed(2),        // preço total do pedido
+        produtos: produtosStr,
+        quantidade: quantidadeTotal,
+        total: total.toFixed(2),
         nome: nome,
         telefone: telefone,
         dataHora: new Date().toLocaleString()
       };
       
-      // Chama a função que registra o pedido na planilha (silenciosamente)
+      // Registra o pedido na planilha de maneira silenciosa
       registerOrder(orderData);
       
-      // Redireciona para o WhatsApp com o pedido formatado
+      // Redireciona para o WhatsApp com a mensagem formatada
       let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
