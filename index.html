@@ -12,12 +12,12 @@
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow-x: hidden;
+      overflow-x: hidden; /* Garante que conteúdos fora da tela não apareçam */
     }
     /* Cabeçalho – estrutura com posicionamento absoluto para cada parte */
     .header {
       position: fixed;
-      top: 40px;
+      top: 40px; /* Espaço para o banner */
       left: 0;
       width: 100%;
       height: 60px;
@@ -26,12 +26,14 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       z-index: 1000;
     }
+    /* Menu no canto superior esquerdo */
     .header-left {
       position: absolute;
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
     }
+    /* Logo centralizada */
     .header-center {
       position: absolute;
       left: 50%;
@@ -41,15 +43,17 @@
     .header-center .logo {
       width: 65px;
     }
+    /* Ícones (lupa e carrinho) no canto superior direito */
     .header-right {
       position: absolute;
-      right: 5px;
+      right: 5px; /* Ajustado para afastar mais para a direita */
       top: 50%;
       transform: translateY(-50%);
       display: flex;
       align-items: center;
       gap: 15px;
     }
+    /* Define todos os ícones com o mesmo tamanho (28x28 pixels) */
     .menu-icon,
     .header-right img.icon {
       font-size: 28px;
@@ -60,6 +64,7 @@
       align-items: center;
       justify-content: center;
     }
+    /* Redimensiona o círculo da contagem do carrinho */
     .cart-count {
       background: red;
       color: #fff;
@@ -103,7 +108,7 @@
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
     }
-    /* Input de Pesquisa */
+    /* Input de Pesquisa – posição fixa */
     .search-container {
       position: fixed;
       top: 0;
@@ -116,7 +121,7 @@
     }
     .search-input {
       position: fixed;
-      top: -60px;
+      top: -60px; /* Inicia oculto acima da viewport */
       padding: 10px 15px;
       font-size: 18px;
       border: 2px solid #f8c91c;
@@ -133,7 +138,7 @@
     .search-input.active {
       opacity: 1;
       visibility: visible;
-      top: 120px;
+      top: 120px; /* Fica um pouco abaixo */
     }
     @media screen and (min-width: 768px) {
       .search-input { width: 400px; }
@@ -141,7 +146,7 @@
     @media screen and (min-width: 1024px) {
       .search-input { width: 500px; }
     }
-    /* Sidebar */
+    /* Sidebar com Instagram e WhatsApp – Melhorada */
     .sidebar {
       position: fixed;
       top: 0;
@@ -245,39 +250,12 @@
       text-align: center;
       border: 1px solid transparent;
     }
-    /* Estilos do Carrossel de Produto */
-    .product-carousel {
-      position: relative;
-      overflow: hidden;
+    .product-image {
+      width: 100%;
+      height: auto;
       border-radius: 8px;
       outline: 2px solid #fff;
       outline-offset: 5px;
-    }
-    .carousel-track {
-      display: flex;
-      transition: transform 0.3s ease;
-    }
-    .carousel-track img {
-      width: 100%;
-      display: block;
-    }
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2rem;
-      color: #fff;
-      background: rgba(0,0,0,0.5);
-      padding: 5px;
-      cursor: pointer;
-      user-select: none;
-      z-index: 2;
-    }
-    .left-arrow {
-      left: 10px;
-    }
-    .right-arrow {
-      right: 10px;
     }
     .product-description h2 {
       margin: 10px 0;
@@ -381,6 +359,20 @@
       font-weight: bold;
     }
     .modal-buttons button:hover { background: #e6b900; }
+
+    /* -------------------------------------------------
+       Ajustes para dispositivos móveis – layout full width
+    --------------------------------------------------- */
+    @media (max-width: 768px) {
+      #products-container {
+        max-width: 100%;
+        padding: 10px;
+      }
+      .product-card {
+        width: 95%;
+        margin: 10px auto;
+      }
+    }
   </style>
   <!-- Biblioteca PapaParse para ler CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -390,7 +382,7 @@
   <div class="promo-banner">
     <p>Parcele em até 5x sem juros | Frete grátis acima de R$ 300</p>
   </div>
-  <!-- Cabeçalho -->
+  <!-- Cabeçalho com três áreas posicionadas de forma absoluta -->
   <header class="header">
     <div class="header-left">
       <span class="menu-icon" onclick="animateIcon(this); toggleSidebar()">☰</span>
@@ -469,10 +461,12 @@
   </div>
   
   <script>
-    // Funções utilitárias de normalização e singularização
+    // Normaliza o texto removendo acentos e convertendo para minúsculas
     function normalizeText(text) {
       return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
+    
+    // Converte termos para sua forma singular
     function singularize(text) {
       let result = text;
       const mapping = {
@@ -488,6 +482,8 @@
       }
       return result;
     }
+    
+    // Termos por categoria (em forma singular)
     const categoryTerms = {
       "Anéis": ["anel"],
       "Pulseiras": ["pulseira"],
@@ -496,11 +492,13 @@
       "Pingentes": ["pingente"]
     };
     
+    // Recupera o carrinho ou inicializa um array vazio
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let allProducts = [];
     let currentProduct = null;
     let currentProductImage = null;
     
+    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -510,6 +508,7 @@
         countElem.style.visibility = "hidden";
       }
     }
+    
     window.addEventListener("load", () => {
       cart = JSON.parse(localStorage.getItem("cart")) || [];
       updateCartCount();
@@ -532,9 +531,11 @@
         video.play();
       }
     }
+    
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("open");
     }
+    
     function animateIcon(element) {
       element.classList.add("icon-animate");
       setTimeout(() => element.classList.remove("icon-animate"), 200);
@@ -550,14 +551,17 @@
       imgClone.style.transition = 'all 1s ease-in-out';
       imgClone.style.zIndex = 1500;
       document.body.appendChild(imgClone);
+  
       const cartIcon = document.getElementById('cart-icon');
       const cartRect = cartIcon.getBoundingClientRect();
+  
       setTimeout(() => {
         imgClone.style.top = cartRect.top + 'px';
         imgClone.style.left = cartRect.left + 'px';
         imgClone.style.width = '20px';
         imgClone.style.opacity = '0.5';
       }, 10);
+  
       setTimeout(() => {
         document.body.removeChild(imgClone);
       }, 1010);
@@ -573,7 +577,7 @@
         oldPrice: product["Preço Antigo"],
         newPrice: product["Preço Novo"],
         parcelas: product.Parcelas,
-        image: product["URL da Imagem 1"] // Pode-se usar a imagem principal
+        image: product["URL da Imagem"]
       });
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
@@ -598,21 +602,8 @@
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
-        // Criação do carrossel com as 4 imagens
-        let carouselHTML = `
-          <div class="product-carousel">
-            <div class="carousel-track">
-              <img src="${product["URL da Imagem 1"]}" alt="${product.Nome}" class="product-image">
-              <img src="${product["URL da Imagem 2"]}" alt="${product.Nome}" class="product-image">
-              <img src="${product["URL da Imagem 3"]}" alt="${product.Nome}" class="product-image">
-              <img src="${product["URL da Imagem 4"]}" alt="${product.Nome}" class="product-image">
-            </div>
-            <span class="arrow left-arrow">&#10094;</span>
-            <span class="arrow right-arrow">&#10095;</span>
-          </div>`;
-          
         let productHTML = `
-          ${carouselHTML}
+          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
           <div class="product-description">
             <h2>${product.Nome}</h2>
             <div class="prices">
@@ -624,44 +615,18 @@
           </div>`;
         card.innerHTML = productHTML;
         container.appendChild(card);
-        
-        // Inicializa o carrossel para este card
-        initializeCarousel(card);
-        
-        // Para o botão de compra, pega a imagem visível (primeira imagem do track)
         const buyButton = card.querySelector(".buy-button");
         buyButton.addEventListener("click", () => {
-          const productImg = card.querySelector('.carousel-track img');
+          const productImg = card.querySelector('.product-image');
           handleBuy(product, buyButton, productImg);
         });
       });
       document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
     }
     
-    // Função para inicializar o carrossel em cada card
-    function initializeCarousel(card) {
-      const carousel = card.querySelector('.product-carousel');
-      if (!carousel) return;
-      const track = carousel.querySelector('.carousel-track');
-      const slides = track.children;
-      let index = 0;
-      const updateCarousel = () => {
-        track.style.transform = `translateX(-${index * 100}%)`;
-      };
-      const leftArrow = carousel.querySelector('.left-arrow');
-      const rightArrow = carousel.querySelector('.right-arrow');
-      leftArrow.addEventListener('click', function() {
-        index = index <= 0 ? slides.length - 1 : index - 1;
-        updateCarousel();
-      });
-      rightArrow.addEventListener('click', function() {
-        index = index >= slides.length - 1 ? 0 : index + 1;
-        updateCarousel();
-      });
-    }
-    
     function filterProducts() {
       let filtered = allProducts.slice();
+      
       const category = document.getElementById("category").value;
       const titleElement = document.querySelector(".products-title");
       if (category === "all") {
@@ -674,6 +639,7 @@
           return terms.some(term => normalizedProductName.includes(term));
         });
       }
+      
       const searchInputRaw = document.getElementById("searchInput").value.trim();
       if (searchInputRaw !== "") {
         const normalizedSearch = singularize(normalizeText(searchInputRaw));
@@ -682,10 +648,11 @@
           return normalizedProductName.includes(normalizedSearch);
         });
       }
+      
       renderProducts(filtered);
     }
     
-    // Carrega os produtos da planilha CSV
+    // Planilha atualizada
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhaZYu5u9AzBY2hQPymf2Tf6FNnWclXELvpuifdXsiZTFgYF1uPAVybfJUob8ydsfTXeqTVfJ7dyF9/pub?output=csv";
     Papa.parse(csvUrl, {
       download: true,
@@ -729,7 +696,7 @@
     }
     
     function continueToCart() {
-      if (currentProduct) {
+      if(currentProduct) {
         addToCart(currentProduct);
         if (currentProductImage) {
           flyToCart(currentProductImage);
