@@ -389,7 +389,7 @@
         margin: 10px auto;
       }
       .buy-button {
-        width: 80%; /* Botão um pouco mais fino */
+        width: 100%; /* agora cobre toda a largura do card, igual às imagens */
         margin: 10px auto;
         font-size: 1.2rem;
         padding: 8px 0;
@@ -587,7 +587,7 @@
         oldPrice: product["Preço Antigo"],
         newPrice: product["Preço Novo"],
         parcelas: product.Parcelas,
-        image: product["URL da Imagem 1"] // Pode-se usar a imagem principal
+        image: product["URL da Imagem 1"]
       });
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
@@ -612,7 +612,6 @@
       products.forEach(product => {
         const card = document.createElement("div");
         card.classList.add("product-card");
-        // Criação do carrossel com as 4 imagens
         let carouselHTML = `
           <div class="product-carousel">
             <div class="carousel-track">
@@ -624,7 +623,6 @@
             <span class="arrow left-arrow">&#10094;</span>
             <span class="arrow right-arrow">&#10095;</span>
           </div>`;
-          
         let productHTML = `
           ${carouselHTML}
           <div class="product-description">
@@ -638,11 +636,7 @@
           </div>`;
         card.innerHTML = productHTML;
         container.appendChild(card);
-        
-        // Inicializa o carrossel para este card
         initializeCarousel(card);
-        
-        // Para o botão de compra, pega a imagem visível (primeira imagem do track)
         const buyButton = card.querySelector(".buy-button");
         buyButton.addEventListener("click", () => {
           const productImg = card.querySelector('.carousel-track img');
@@ -652,7 +646,6 @@
       document.getElementById("product-count").innerText = products.length + " produto(s) encontrado(s)";
     }
     
-    // Função para inicializar o carrossel em cada card
     function initializeCarousel(card) {
       const carousel = card.querySelector('.product-carousel');
       if (!carousel) return;
@@ -664,11 +657,11 @@
       };
       const leftArrow = carousel.querySelector('.left-arrow');
       const rightArrow = carousel.querySelector('.right-arrow');
-      leftArrow.addEventListener('click', function() {
+      leftArrow.addEventListener('click', () => {
         index = index <= 0 ? slides.length - 1 : index - 1;
         updateCarousel();
       });
-      rightArrow.addEventListener('click', function() {
+      rightArrow.addEventListener('click', () => {
         index = index >= slides.length - 1 ? 0 : index + 1;
         updateCarousel();
       });
@@ -710,7 +703,7 @@
       }
     });
     
-    window.addEventListener("scroll", function() {
+    window.addEventListener("scroll", () => {
       const banner = document.querySelector(".promo-banner");
       const header = document.querySelector(".header");
       if (window.scrollY > 0) {
